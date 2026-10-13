@@ -6,21 +6,27 @@ import {
   Database,
   ArrowRight,
   GitBranch,
-  Terminal,
   Copy,
   Check,
+  CheckCircle,
+  Users,
   ShieldCheck,
   Lightning,
   TreeStructure,
-  Table as TableIcon,
-  CheckCircle,
+  Code,
+  ShareNetwork,
+  ClockCounterClockwise,
+  Warning,
+  FileCode,
+  LockKey,
 } from "@phosphor-icons/react";
 
 export default function LandingPage() {
-  const [activeTab, setActiveTab] = useState<"sql" | "drizzle" | "prisma">("sql");
+  const [activeTab, setActiveTab] = useState<"sql" | "drizzle" | "prisma" | "mysql" | "sqlite">("sql");
   const [copied, setCopied] = useState(false);
-  const [activeTable, setActiveTable] = useState<"users" | "organizations" | "memberships">("memberships");
+  const [activeTable, setActiveTable] = useState<"organizations" | "users" | "memberships">("memberships");
   const [diffView, setDiffView] = useState<"visual" | "sql">("visual");
+  const [workflowTab, setWorkflowTab] = useState<0 | 1 | 2>(0);
 
   const copyCode = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -30,8 +36,8 @@ export default function LandingPage() {
 
   const codeSnippets = {
     sql: `-- FluxDB Compiled Migration
--- Dialect: PostgreSQL 16+
--- Verified: Zero breaking changes
+-- Target: PostgreSQL 16+ (Standard DDL)
+-- Verified: Zero breaking changes · Topological Order
 
 CREATE TABLE organizations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -123,10 +129,90 @@ model Membership {
   @@index([userId])
   @@index([organizationId])
 }`,
+
+    mysql: `-- FluxDB Compiled Migration
+-- Target: MySQL 8.0+ / InnoDB
+CREATE TABLE \`organizations\` (
+  \`id\` VARCHAR(36) NOT NULL,
+  \`slug\` VARCHAR(64) NOT NULL,
+  \`name\` VARCHAR(255) NOT NULL,
+  \`tier\` VARCHAR(32) NOT NULL DEFAULT 'scale',
+  \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (\`id\`),
+  UNIQUE KEY \`uq_org_slug\` (\`slug\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE \`users\` (
+  \`id\` VARCHAR(36) NOT NULL,
+  \`email\` VARCHAR(255) NOT NULL,
+  \`full_name\` VARCHAR(128) NOT NULL,
+  \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (\`id\`),
+  UNIQUE KEY \`uq_user_email\` (\`email\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE \`memberships\` (
+  \`id\` VARCHAR(36) NOT NULL,
+  \`organization_id\` VARCHAR(36) NOT NULL,
+  \`user_id\` VARCHAR(36) NOT NULL,
+  \`role\` VARCHAR(32) NOT NULL DEFAULT 'member',
+  \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (\`id\`),
+  CONSTRAINT \`fk_mem_org\` FOREIGN KEY (\`organization_id\`) REFERENCES \`organizations\` (\`id\`) ON DELETE CASCADE,
+  CONSTRAINT \`fk_mem_user\` FOREIGN KEY (\`user_id\`) REFERENCES \`users\` (\`id\`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
+
+    sqlite: `-- FluxDB Compiled Migration
+-- Target: SQLite 3 / Cloudflare D1 / Turso
+CREATE TABLE "organizations" (
+  "id" TEXT PRIMARY KEY,
+  "slug" TEXT NOT NULL UNIQUE,
+  "name" TEXT NOT NULL,
+  "tier" TEXT NOT NULL DEFAULT 'scale',
+  "created_at" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "users" (
+  "id" TEXT PRIMARY KEY,
+  "email" TEXT NOT NULL UNIQUE,
+  "full_name" TEXT NOT NULL,
+  "created_at" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "memberships" (
+  "id" TEXT PRIMARY KEY,
+  "organization_id" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE CASCADE,
+  "user_id" TEXT NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+  "role" TEXT NOT NULL DEFAULT 'member',
+  "created_at" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE UNIQUE INDEX "uq_org_user" ON "memberships"("organization_id", "user_id");`,
   };
 
+  const workflowSteps = [
+    {
+      step: "01",
+      title: "Model Topology Visually",
+      desc: "Drag and drop tables, define primary/foreign keys, configure column types, and establish composite constraints on a high-density, vector-backed canvas.",
+      code: `ALTER TABLE memberships\n  ADD CONSTRAINT fk_organization\n  FOREIGN KEY (organization_id)\n  REFERENCES organizations(id);`,
+    },
+    {
+      step: "02",
+      title: "Multiplayer Review & AST Validation",
+      desc: "Engineers see live colored cursor presence. The AST graph validator automatically verifies that no circular reference deadlocks exist across foreign keys.",
+      code: `// Cycle detection check\nDAG.validateAcyclic() => true\nGraph topological order: [organizations, users, memberships]`,
+    },
+    {
+      step: "03",
+      title: "Compile & Ship Migration",
+      desc: "Kahn's topological algorithm computes the non-blocking SQL diff from your baseline checkpoint, ready to paste into Prisma, Drizzle, or Flyway pipelines.",
+      code: `ALTER TABLE organizations ADD COLUMN tier VARCHAR(32) DEFAULT 'scale';\nCREATE INDEX idx_org_slug ON organizations (slug);`,
+    },
+  ];
+
   return (
-    <div className="relative min-h-screen bg-[#FFFFFF] text-[#0F172A]">
+    <div className="relative min-h-screen bg-[#FFFFFF] text-[#0F172A] selection:bg-[#0F172A] selection:text-[#FFFFFF]">
       {/* Precision Top Navigation Bar */}
       <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-[#FFFFFF]/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -142,22 +228,31 @@ model Membership {
 
             <div className="hidden items-center gap-2 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1 text-xs text-[#475569] sm:flex">
               <span className="h-1.5 w-1.5 rounded-full bg-[#059669]" />
-              <span className="font-medium">Version 0.38 · Edge Runtime</span>
+              <span className="font-medium font-mono">v0.38 · Edge Runtime</span>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-8 text-sm font-medium text-[#475569] md:flex">
-            <a href="#studio" className="transition-colors hover:text-[#0F172A]">
-              Studio Canvas
+          <nav className="hidden items-center gap-7 text-xs font-semibold uppercase tracking-wider text-[#64748B] md:flex font-mono">
+            <a href="#workbench" className="transition-colors hover:text-[#0F172A]">
+              Studio
             </a>
-            <a href="#migrations" className="transition-colors hover:text-[#0F172A]">
-              Migration Engine
+            <a href="#problems" className="transition-colors hover:text-[#0F172A]">
+              Architecture
+            </a>
+            <a href="#workflow" className="transition-colors hover:text-[#0F172A]">
+              Workflow
             </a>
             <a href="#dialects" className="transition-colors hover:text-[#0F172A]">
-              ORM Compilers
+              Compilers
+            </a>
+            <a href="#features" className="transition-colors hover:text-[#0F172A]">
+              Capabilities
             </a>
             <a href="#specs" className="transition-colors hover:text-[#0F172A]">
-              Enterprise Specs
+              Benchmark
+            </a>
+            <a href="#pricing" className="transition-colors hover:text-[#0F172A]">
+              Pricing
             </a>
           </nav>
 
@@ -175,23 +270,24 @@ model Membership {
       </header>
 
       <main>
-        {/* HERO SECTION: High-Fintech Clarity & Studio Viewport */}
+        {/* 1. HERO SECTION */}
         <section className="border-b border-[#E2E8F0] bg-[#F8FAFC] pt-16 pb-20 sm:pt-24 sm:pb-28">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#CBD5E1] bg-[#FFFFFF] px-3.5 py-1 text-xs font-semibold text-[#0F172A] shadow-xs">
-                <span>The Visual Studio for Relational Architecture</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#059669]" />
+                <span>The Visual Studio for Relational Architecture & Migrations</span>
               </div>
 
               <h1 className="font-display mt-6 text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-6xl sm:leading-[1.1]">
-                Design schemas visually.
+                Design schemas together.
                 <br />
                 <span className="text-[#475569]">Ship migrations with confidence.</span>
               </h1>
 
               <p className="mt-6 text-base leading-relaxed text-[#475569] sm:text-lg">
-                FluxDB gives engineering teams a collaborative canvas to model complex relational topologies,
-                validate multi-column constraints, and compile deterministic SQL migrations for PostgreSQL, Drizzle, and Prisma.
+                FluxDB gives engineering teams a collaborative multiplayer canvas to model complex relational topologies,
+                prevent foreign-key deadlocks, and compile deterministic SQL migrations for PostgreSQL, Drizzle, and Prisma.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -205,17 +301,26 @@ model Membership {
                 </Link>
               </div>
 
-              <div className="mt-4 flex items-center justify-center gap-4 text-xs text-[#94A3B8]">
-                <span>Zero installation</span>
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-[#64748B]">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle size={14} className="text-[#059669]" weight="fill" />
+                  Zero DB credentials needed
+                </span>
                 <span>•</span>
-                <span>Real-time multiplayer</span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle size={14} className="text-[#059669]" weight="fill" />
+                  Real-time multiplayer CRDTs
+                </span>
                 <span>•</span>
-                <span>Pure standard SQL output</span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle size={14} className="text-[#059669]" weight="fill" />
+                  Topological Kahn Diff Engine
+                </span>
               </div>
             </div>
 
             {/* Live Interactive Studio Canvas Frame */}
-            <div id="studio" className="mt-14 overflow-hidden rounded-2xl border border-[#CBD5E1] bg-[#FFFFFF] shadow-xl">
+            <div id="workbench" className="mt-14 overflow-hidden rounded-2xl border border-[#CBD5E1] bg-[#FFFFFF] shadow-xl">
               {/* Studio Window Bar */}
               <div className="flex items-center justify-between border-b border-[#E2E8F0] bg-[#F1F5F9] px-4 py-3">
                 <div className="flex items-center gap-3">
@@ -225,143 +330,149 @@ model Membership {
                     <div className="h-3 w-3 rounded-full bg-[#CBD5E1]" />
                   </div>
                   <span className="font-mono text-xs font-medium text-[#475569]">
-                    fluxdb.studio/storefront-production
+                    fluxdb.studio/saas-subscription-service
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-[#ECFDF5] px-2.5 py-0.5 text-xs font-medium text-[#059669]">
-                    3 tables · 2 relations active
+                <div className="flex items-center gap-3">
+                  <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#A7F3D0] bg-[#ECFDF5] px-2.5 py-0.5 text-xs font-medium text-[#059669]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#059669] animate-pulse" />
+                    3 tables · 2 relations active · 2 peers online
                   </span>
                   <Link
                     href="/app/proj_demo_saas"
-                    className="rounded border border-[#CBD5E1] bg-[#FFFFFF] px-2.5 py-1 text-xs font-medium text-[#0F172A] hover:bg-[#F8FAFC]"
+                    className="rounded-md border border-[#CBD5E1] bg-[#FFFFFF] px-2.5 py-1 text-xs font-medium text-[#0F172A] hover:bg-[#F8FAFC] transition-colors"
                   >
-                    Open Fullscreen Studio ↗
+                    Open Studio ↗
                   </Link>
                 </div>
               </div>
 
               {/* Canvas Preview Body */}
-              <div className="relative min-h-[440px] p-8 sm:p-12 bg-[#F8FAFC] bg-[radial-gradient(#CBD5E1_1px,transparent_1px)] [background-size:20px_20px]">
-                {/* SVG Connecting Relationship Line */}
-                <svg
-                  className="pointer-events-none absolute inset-0 h-full w-full"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M 340 140 C 440 140, 460 260, 560 260"
-                    fill="none"
-                    stroke="#0F172A"
-                    strokeWidth="2"
-                    strokeDasharray="4 4"
-                  />
-                  <circle cx="340" cy="140" r="5" fill="#0F172A" />
-                  <circle cx="560" cy="260" r="5" fill="#0F172A" />
-                </svg>
-
-                <div className="relative z-10 grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-start">
+              <div className="relative p-6 sm:p-10 bg-[#F8FAFC] bg-[radial-gradient(#CBD5E1_1px,transparent_1px)] [background-size:20px_20px]">
+                <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto items-start">
                   {/* Table Card 1: organizations */}
                   <div
                     onClick={() => setActiveTable("organizations")}
-                    className={`cursor-pointer rounded-xl border bg-[#FFFFFF] p-5 shadow-sm transition-all ${
+                    className={`cursor-pointer rounded-xl border bg-[#FFFFFF] p-4 shadow-xs transition-all ${
                       activeTable === "organizations"
                         ? "border-[#0F172A] ring-2 ring-[#0F172A]/10 shadow-md"
                         : "border-[#E2E8F0] hover:border-[#CBD5E1]"
                     }`}
                   >
-                    <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-3">
+                    <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2.5">
                       <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#059669]" />
-                        <span className="font-mono text-sm font-bold text-[#0F172A]">organizations</span>
+                        <span className="h-2 w-2 rounded-full bg-[#059669]" />
+                        <span className="font-mono text-xs font-bold text-[#0F172A]">organizations</span>
                       </div>
-                      <span className="font-mono text-xs text-[#94A3B8]">5 columns</span>
+                      <span className="font-mono text-[10px] text-[#94A3B8]">5 cols</span>
                     </div>
 
-                    <div className="mt-3 space-y-2 font-mono text-xs">
-                      <div className="flex items-center justify-between py-1">
+                    <div className="mt-2.5 space-y-1.5 font-mono text-[11px]">
+                      <div className="flex items-center justify-between py-0.5">
                         <span className="font-semibold text-[#0F172A]">id</span>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1">
                           <span className="text-[#64748B]">uuid</span>
-                          <span className="rounded bg-[#FEF3C7] px-1.5 py-0.5 text-[10px] font-bold text-[#D97706]">
-                            PK
-                          </span>
+                          <span className="rounded bg-[#FEF3C7] px-1 py-0.2 text-[9px] font-bold text-[#D97706]">PK</span>
                         </div>
                       </div>
-
-                      <div className="flex items-center justify-between py-1">
+                      <div className="flex items-center justify-between py-0.5">
                         <span className="text-[#0F172A]">slug</span>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1">
                           <span className="text-[#64748B]">varchar(64)</span>
-                          <span className="rounded bg-[#EFF6FF] px-1.5 py-0.5 text-[10px] font-bold text-[#2563EB]">
-                            UQ
-                          </span>
+                          <span className="rounded bg-[#EFF6FF] px-1 py-0.2 text-[9px] font-bold text-[#2563EB]">UQ</span>
                         </div>
                       </div>
-
-                      <div className="flex items-center justify-between py-1 text-[#475569]">
+                      <div className="flex items-center justify-between py-0.5 text-[#475569]">
                         <span>name</span>
                         <span>varchar(255)</span>
                       </div>
-
-                      <div className="flex items-center justify-between py-1 text-[#475569]">
+                      <div className="flex items-center justify-between py-0.5 text-[#475569]">
                         <span>tier</span>
                         <span className="text-[#94A3B8]">&apos;scale&apos;</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Table Card 2: memberships */}
+                  {/* Table Card 2: users */}
+                  <div
+                    onClick={() => setActiveTable("users")}
+                    className={`cursor-pointer rounded-xl border bg-[#FFFFFF] p-4 shadow-xs transition-all ${
+                      activeTable === "users"
+                        ? "border-[#0F172A] ring-2 ring-[#0F172A]/10 shadow-md"
+                        : "border-[#E2E8F0] hover:border-[#CBD5E1]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-[#2563EB]" />
+                        <span className="font-mono text-xs font-bold text-[#0F172A]">users</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-[#94A3B8]">4 cols</span>
+                    </div>
+
+                    <div className="mt-2.5 space-y-1.5 font-mono text-[11px]">
+                      <div className="flex items-center justify-between py-0.5">
+                        <span className="font-semibold text-[#0F172A]">id</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[#64748B]">uuid</span>
+                          <span className="rounded bg-[#FEF3C7] px-1 py-0.2 text-[9px] font-bold text-[#D97706]">PK</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between py-0.5">
+                        <span className="text-[#0F172A]">email</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[#64748B]">varchar(255)</span>
+                          <span className="rounded bg-[#EFF6FF] px-1 py-0.2 text-[9px] font-bold text-[#2563EB]">UQ</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between py-0.5 text-[#475569]">
+                        <span>full_name</span>
+                        <span>varchar(128)</span>
+                      </div>
+                      <div className="flex items-center justify-between py-0.5 text-[#475569]">
+                        <span>created_at</span>
+                        <span className="text-[#94A3B8]">timestamptz</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Table Card 3: memberships */}
                   <div
                     onClick={() => setActiveTable("memberships")}
-                    className={`cursor-pointer rounded-xl border bg-[#FFFFFF] p-5 shadow-sm transition-all ${
+                    className={`cursor-pointer rounded-xl border bg-[#FFFFFF] p-4 shadow-xs transition-all ${
                       activeTable === "memberships"
                         ? "border-[#0F172A] ring-2 ring-[#0F172A]/10 shadow-md"
                         : "border-[#E2E8F0] hover:border-[#CBD5E1]"
                     }`}
                   >
-                    <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-3">
+                    <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2.5">
                       <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#2563EB]" />
-                        <span className="font-mono text-sm font-bold text-[#0F172A]">memberships</span>
+                        <span className="h-2 w-2 rounded-full bg-[#7C3AED]" />
+                        <span className="font-mono text-xs font-bold text-[#0F172A]">memberships</span>
                       </div>
-                      <span className="rounded bg-[#F1F5F9] px-2 py-0.5 font-mono text-[11px] font-semibold text-[#475569]">
-                        1 : N Target
+                      <span className="rounded bg-[#F1F5F9] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-[#475569]">
+                        Junction
                       </span>
                     </div>
 
-                    <div className="mt-3 space-y-2 font-mono text-xs">
-                      <div className="flex items-center justify-between py-1">
+                    <div className="mt-2.5 space-y-1.5 font-mono text-[11px]">
+                      <div className="flex items-center justify-between py-0.5">
                         <span className="font-semibold text-[#0F172A]">id</span>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1">
                           <span className="text-[#64748B]">uuid</span>
-                          <span className="rounded bg-[#FEF3C7] px-1.5 py-0.5 text-[10px] font-bold text-[#D97706]">
-                            PK
-                          </span>
+                          <span className="rounded bg-[#FEF3C7] px-1 py-0.2 text-[9px] font-bold text-[#D97706]">PK</span>
                         </div>
                       </div>
-
-                      <div className="flex items-center justify-between py-1">
+                      <div className="flex items-center justify-between py-0.5">
                         <span className="font-semibold text-[#0F172A]">organization_id</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[#64748B]">uuid</span>
-                          <span className="rounded bg-[#ECFDF5] px-1.5 py-0.5 text-[10px] font-bold text-[#059669]">
-                            FK → orgs
-                          </span>
-                        </div>
+                        <span className="rounded bg-[#ECFDF5] px-1 py-0.2 text-[9px] font-bold text-[#059669]">FK → orgs</span>
                       </div>
-
-                      <div className="flex items-center justify-between py-1">
+                      <div className="flex items-center justify-between py-0.5">
                         <span className="text-[#0F172A]">user_id</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[#64748B]">uuid</span>
-                          <span className="rounded bg-[#EFF6FF] px-1.5 py-0.5 text-[10px] font-bold text-[#2563EB]">
-                            FK → users
-                          </span>
-                        </div>
+                        <span className="rounded bg-[#EFF6FF] px-1 py-0.2 text-[9px] font-bold text-[#2563EB]">FK → users</span>
                       </div>
-
-                      <div className="flex items-center justify-between py-1 text-[#475569]">
+                      <div className="flex items-center justify-between py-0.5 text-[#475569]">
                         <span>role</span>
                         <span className="text-[#94A3B8]">&apos;member&apos;</span>
                       </div>
@@ -370,18 +481,25 @@ model Membership {
                 </div>
 
                 {/* Bottom Synthesized Statement Drawer */}
-                <div className="mt-8 rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] p-4 shadow-sm max-w-4xl mx-auto">
-                  <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2 text-xs">
-                    <span className="font-mono font-semibold text-[#0F172A]">
-                      Synthesized Foreign Key DDL Statement
-                    </span>
+                <div className="mt-8 rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] p-4 shadow-sm max-w-5xl mx-auto">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#F1F5F9] pb-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <Code size={14} className="text-[#0F172A]" weight="bold" />
+                      <span className="font-mono font-semibold text-[#0F172A]">
+                        Live AST Synthesizer: {activeTable}
+                      </span>
+                    </div>
                     <span className="text-[#059669] font-mono text-[11px] font-medium">
-                      ✓ Validated in AST (Zero cycles)
+                      ✓ Validated in Topological DAG (0 Deadlocks)
                     </span>
                   </div>
-                  <div className="mt-2 font-mono text-xs text-[#475569] overflow-x-auto whitespace-pre">
+                  <div className="mt-2 font-mono text-xs text-[#334155] overflow-x-auto">
                     <code>
-                      ALTER TABLE memberships ADD CONSTRAINT fk_organization FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
+                      {activeTable === "memberships"
+                        ? "ALTER TABLE memberships ADD CONSTRAINT fk_org FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;"
+                        : activeTable === "organizations"
+                        ? "CREATE UNIQUE INDEX idx_organizations_slug ON organizations(slug);"
+                        : "CREATE UNIQUE INDEX idx_users_email ON users(email);"}
                     </code>
                   </div>
                 </div>
@@ -390,11 +508,148 @@ model Membership {
           </div>
         </section>
 
-        {/* SECTION 2: Automated Migration Diff Engine (Two-Column Linear/Ramp Layout) */}
-        <section id="migrations" className="border-b border-[#E2E8F0] py-20 bg-[#FFFFFF]">
+        {/* 2. PROBLEM STATEMENT: 3 CORE ENGINEERING PAIN POINTS */}
+        <section id="problems" className="py-20 border-b border-[#E2E8F0] bg-[#FFFFFF]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl">
+              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
+                The Problem
+              </span>
+              <h2 className="font-display mt-2 text-3xl font-extrabold text-[#0F172A] sm:text-4xl">
+                Relational schema design is broken across the stack.
+              </h2>
+              <p className="mt-3 text-sm text-[#475569] sm:text-base leading-relaxed">
+                Modern teams have Figma for product design and Linear for project tracking. But when architecting databases,
+                engineers are forced to choose between static canvas drawings or dangerous raw SQL in Slack threads.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              {/* Pain Point 1 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] text-[#DC2626]">
+                  <Warning size={20} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  01 / Static Diagrams Drift from Code
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Visual diagrams drawn in Miro, Eraser, or DBdiagram drift from the codebase within days of launch.
+                  Because they don&apos;t output executable migrations, nobody maintains them.
+                </p>
+                <div className="mt-4 border-t border-[#E2E8F0] pt-3 font-mono text-[11px] text-[#DC2626]">
+                  Result: Docs say one thing, PostgreSQL has another.
+                </div>
+              </div>
+
+              {/* Pain Point 2 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] text-[#D97706]">
+                  <LockKey size={20} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  02 / Blind ALTER TABLEs Lock Production
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Manually written migration scripts miss foreign key ordering and create exclusive table locks
+                  on million-row production tables, causing downtime and silent rollback failures.
+                </p>
+                <div className="mt-4 border-t border-[#E2E8F0] pt-3 font-mono text-[11px] text-[#D97706]">
+                  Result: Midnight outages on staging and prod deploys.
+                </div>
+              </div>
+
+              {/* Pain Point 3 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] text-[#2563EB]">
+                  <GitBranch size={20} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  03 / ORM Multi-Writing Friction
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Teams maintaining polyglot stacks must manually translate schemas between Drizzle TypeScript definitions,
+                  Prisma models, and raw SQL migration files, creating subtle type inconsistencies.
+                </p>
+                <div className="mt-4 border-t border-[#E2E8F0] pt-3 font-mono text-[11px] text-[#2563EB]">
+                  Result: Type drift between backend APIs and database AST.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. WORKFLOW TABS: DESIGN → COLLABORATE → SHIP */}
+        <section id="workflow" className="py-20 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl">
+              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
+                Interactive Workflow
+              </span>
+              <h2 className="font-display mt-2 text-3xl font-extrabold text-[#0F172A] sm:text-4xl">
+                From visual canvas to verifiable migration.
+              </h2>
+            </div>
+
+            {/* Workflow Navigation Tabs */}
+            <div className="mt-10 flex gap-2 border-b border-[#E2E8F0] pb-2 font-mono text-xs overflow-x-auto">
+              {workflowSteps.map((ws, idx) => (
+                <button
+                  key={ws.step}
+                  onClick={() => setWorkflowTab(idx as 0 | 1 | 2)}
+                  className={`rounded-lg px-4 py-2 font-medium transition-all cursor-pointer whitespace-nowrap ${
+                    workflowTab === idx
+                      ? "bg-[#0F172A] text-[#FFFFFF] shadow-xs font-bold"
+                      : "bg-[#FFFFFF] text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0]"
+                  }`}
+                >
+                  Phase {ws.step}: {ws.title}
+                </button>
+              ))}
+            </div>
+
+            {/* Active Workflow Tab Content */}
+            <div className="mt-6 rounded-2xl border border-[#CBD5E1] bg-[#FFFFFF] p-8 shadow-sm">
+              <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+                <div className="lg:col-span-5">
+                  <span className="font-mono text-xs font-bold text-[#059669]">
+                    PHASE {workflowSteps[workflowTab].step}
+                  </span>
+                  <h3 className="font-display mt-2 text-2xl font-bold text-[#0F172A]">
+                    {workflowSteps[workflowTab].title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-[#475569]">
+                    {workflowSteps[workflowTab].desc}
+                  </p>
+
+                  <div className="mt-6">
+                    <Link href="/app/proj_demo_saas" className="btn-primary text-xs py-2.5 px-4">
+                      <span>Experience Phase in Studio</span>
+                      <ArrowRight size={13} weight="bold" />
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7">
+                  <div className="rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] overflow-hidden">
+                    <div className="flex items-center justify-between border-b border-[#E2E8F0] bg-[#FFFFFF] px-4 py-2.5 text-xs font-mono">
+                      <span className="text-[#0F172A] font-semibold">Engine Execution Snapshot</span>
+                      <span className="text-[#059669]">STATUS: 200 OK</span>
+                    </div>
+                    <pre className="p-5 font-mono text-xs text-[#0F172A] overflow-x-auto bg-[#FFFFFF]">
+                      <code>{workflowSteps[workflowTab].code}</code>
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. AUTOMATED MIGRATION DIFF ENGINE */}
+        <section id="migrations" className="py-20 border-b border-[#E2E8F0] bg-[#FFFFFF]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
-              {/* Left Column: Technical Narrative */}
               <div className="lg:col-span-5">
                 <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
                   Deterministic Migration Engine
@@ -430,7 +685,6 @@ model Membership {
                 </div>
               </div>
 
-              {/* Right Column: Live Diff Window */}
               <div className="lg:col-span-7">
                 <div className="overflow-hidden rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] shadow-lg">
                   <div className="flex items-center justify-between border-b border-[#E2E8F0] bg-[#FFFFFF] px-5 py-3">
@@ -500,8 +754,8 @@ ALTER TABLE memberships
           </div>
         </section>
 
-        {/* SECTION 3: Multi-Dialect Code Terminal */}
-        <section id="dialects" className="border-b border-[#E2E8F0] py-20 bg-[#F8FAFC]">
+        {/* 5. MULTI-ENGINE CODE TERMINAL */}
+        <section id="dialects" className="py-20 border-b border-[#E2E8F0] bg-[#F8FAFC]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
@@ -524,40 +778,31 @@ ALTER TABLE memberships
 
             <div className="mt-8 overflow-hidden rounded-xl border border-[#CBD5E1] bg-[#FFFFFF] shadow-lg">
               <div className="flex items-center justify-between border-b border-[#E2E8F0] bg-[#F1F5F9] px-4 py-2">
-                <div className="flex items-center gap-1 font-mono text-xs">
-                  <button
-                    onClick={() => setActiveTab("sql")}
-                    className={`rounded px-3 py-1.5 transition-all cursor-pointer ${
-                      activeTab === "sql"
-                        ? "bg-[#FFFFFF] text-[#0F172A] font-semibold shadow-xs"
-                        : "text-[#64748B] hover:text-[#0F172A]"
-                    }`}
-                  >
-                    PostgreSQL (.sql)
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("drizzle")}
-                    className={`rounded px-3 py-1.5 transition-all cursor-pointer ${
-                      activeTab === "drizzle"
-                        ? "bg-[#FFFFFF] text-[#0F172A] font-semibold shadow-xs"
-                        : "text-[#64748B] hover:text-[#0F172A]"
-                    }`}
-                  >
-                    Drizzle ORM (.ts)
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("prisma")}
-                    className={`rounded px-3 py-1.5 transition-all cursor-pointer ${
-                      activeTab === "prisma"
-                        ? "bg-[#FFFFFF] text-[#0F172A] font-semibold shadow-xs"
-                        : "text-[#64748B] hover:text-[#0F172A]"
-                    }`}
-                  >
-                    Prisma Schema (.prisma)
-                  </button>
+                <div className="flex items-center gap-1 font-mono text-xs overflow-x-auto">
+                  {(["sql", "drizzle", "prisma", "mysql", "sqlite"] as const).map((fmt) => (
+                    <button
+                      key={fmt}
+                      onClick={() => setActiveTab(fmt)}
+                      className={`rounded px-3 py-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                        activeTab === fmt
+                          ? "bg-[#FFFFFF] text-[#0F172A] font-semibold shadow-xs"
+                          : "text-[#64748B] hover:text-[#0F172A]"
+                      }`}
+                    >
+                      {fmt === "sql"
+                        ? "PostgreSQL (.sql)"
+                        : fmt === "drizzle"
+                        ? "Drizzle ORM (.ts)"
+                        : fmt === "prisma"
+                        ? "Prisma (.prisma)"
+                        : fmt === "mysql"
+                        ? "MySQL (.sql)"
+                        : "SQLite / D1 (.sql)"}
+                    </button>
+                  ))}
                 </div>
 
-                <span className="font-mono text-xs text-[#64748B]">Strict Types Validated</span>
+                <span className="font-mono text-xs text-[#64748B] hidden sm:inline">Strict Types Validated</span>
               </div>
 
               <div className="overflow-x-auto p-6 font-mono text-xs leading-relaxed text-[#0F172A] bg-[#FFFFFF]">
@@ -569,29 +814,123 @@ ALTER TABLE memberships
           </div>
         </section>
 
-        {/* SECTION 4: Enterprise Specifications Matrix (Clean Table, No AI Slop Cards) */}
-        <section id="specs" className="py-20 bg-[#FFFFFF]">
+        {/* 6. FEATURES 3x2 GRID: ARCHITECTURAL CAPABILITIES */}
+        <section id="features" className="py-20 border-b border-[#E2E8F0] bg-[#FFFFFF]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl">
               <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
-                Technical Specification
+                Engine Features
               </span>
               <h2 className="font-display mt-2 text-3xl font-extrabold text-[#0F172A] sm:text-4xl">
-                Built for production database workflows.
+                Engineering-grade primitives built in.
               </h2>
             </div>
 
-            <div className="mt-10 overflow-hidden rounded-xl border border-[#E2E8F0]">
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {/* Feature 1 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
+                  <Users size={18} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  Multiplayer CRDT Sync
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Sub-30ms state replication with live remote cursors and automatic conflict resolution. Multiple engineers can restructure relations simultaneously.
+                </p>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
+                  <TreeStructure size={18} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  Topological Sort (Kahn&apos;s DAG)
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Graph algorithms detect dependency cycles before migrations run, guaranteeing foreign-key references are created in strict order.
+                </p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
+                  <Lightning size={18} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  Zero-Downtime Safe DDL
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Generates non-blocking column additions with defaults and composite indexes, guarding against exclusive database access locks.
+                </p>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
+                  <ShareNetwork size={18} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  Cryptographic Share Tokens
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Share read-only studio links with frontend teams or contractors. Viewers can inspect schemas and copy code without touching prod.
+                </p>
+              </div>
+
+              {/* Feature 5 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
+                  <FileCode size={18} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  Multi-Dialect AST Compilers
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Native export to PostgreSQL, Drizzle ORM, Prisma, MySQL, and SQLite. One unified schema model drives all your backend services.
+                </p>
+              </div>
+
+              {/* Feature 6 */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
+                  <ClockCounterClockwise size={18} weight="bold" />
+                </div>
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A]">
+                  AST Version Checkpoints
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Create named version snapshots. Instantly compute bidirectional mathematical diffs between any past release and current active state.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 7. INSTITUTIONAL SPECIFICATIONS MATRIX */}
+        <section id="specs" className="py-20 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl">
+              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
+                Competitive Benchmark
+              </span>
+              <h2 className="font-display mt-2 text-3xl font-extrabold text-[#0F172A] sm:text-4xl">
+                Built for modern engineering teams.
+              </h2>
+            </div>
+
+            <div className="mt-10 overflow-hidden rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
               <table className="w-full text-left text-xs font-mono">
                 <thead className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-[#475569]">
                   <tr>
-                    <th className="py-3 px-4 font-semibold">Capability</th>
-                    <th className="py-3 px-4 font-semibold">FluxDB Studio</th>
-                    <th className="py-3 px-4 font-semibold">Legacy Diagram Tools</th>
-                    <th className="py-3 px-4 font-semibold">Traditional Database IDEs</th>
+                    <th className="py-3.5 px-4 font-semibold">Capability</th>
+                    <th className="py-3.5 px-4 font-semibold">FluxDB Studio</th>
+                    <th className="py-3.5 px-4 font-semibold">Legacy Diagram Tools</th>
+                    <th className="py-3.5 px-4 font-semibold">Traditional Database IDEs</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8F0] bg-[#FFFFFF] text-[#334155]">
+                <tbody className="divide-y divide-[#E2E8F0] text-[#334155]">
                   <tr>
                     <td className="py-3.5 px-4 font-semibold text-[#0F172A]">Real-Time Multiplayer</td>
                     <td className="py-3.5 px-4 text-[#059669] font-bold">✓ CRDT Edge Sync</td>
@@ -619,22 +958,193 @@ ALTER TABLE memberships
                 </tbody>
               </table>
             </div>
+          </div>
+        </section>
 
-            {/* Final Action Banner */}
-            <div className="mt-16 rounded-2xl border border-[#CBD5E1] bg-[#F8FAFC] p-8 text-center sm:p-12">
-              <h3 className="font-display text-2xl font-extrabold text-[#0F172A] sm:text-3xl">
-                Start designing your relational schema today.
-              </h3>
-              <p className="mx-auto mt-2 max-w-lg text-sm text-[#475569]">
-                Open the studio canvas directly in your browser. No database connection string or credit card required.
+        {/* 8. TRANSPARENT PRICING */}
+        <section id="pricing" className="py-20 border-b border-[#E2E8F0] bg-[#FFFFFF]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
+                Pricing Plans
+              </span>
+              <h2 className="font-display mt-2 text-3xl font-extrabold text-[#0F172A] sm:text-4xl">
+                Predictable pricing for engineering teams.
+              </h2>
+              <p className="mt-3 text-sm text-[#475569]">
+                Start designing immediately for free. Upgrade when your team needs shared organizational workspaces.
               </p>
-              <div className="mt-6 flex justify-center gap-3">
+            </div>
+
+            <div className="mt-12 grid gap-8 max-w-4xl mx-auto md:grid-cols-2 items-stretch">
+              {/* Free Tier */}
+              <div className="flex flex-col justify-between rounded-2xl border border-[#CBD5E1] bg-[#FFFFFF] p-8 shadow-xs">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-display text-lg font-bold text-[#0F172A]">Developer</h3>
+                    <span className="rounded border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-0.5 text-xs font-mono text-[#64748B]">
+                      Community
+                    </span>
+                  </div>
+                  <div className="mt-4 flex items-baseline gap-1">
+                    <span className="font-display text-4xl font-extrabold text-[#0F172A]">$0</span>
+                    <span className="text-xs text-[#64748B]">/ forever</span>
+                  </div>
+                  <p className="mt-3 text-xs leading-relaxed text-[#475569]">
+                    Full access to the studio canvas, instant ORM code compilation, and local checkpoints.
+                  </p>
+
+                  <div className="mt-6 space-y-3 font-mono text-xs border-t border-[#F1F5F9] pt-6">
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Unlimited public schemas</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Up to 25 tables per canvas</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>PostgreSQL, Drizzle & Prisma export</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Local browser version checkpoints</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  <Link href="/app/dashboard" className="btn-secondary w-full justify-center text-xs py-3">
+                    Start Free in Browser
+                  </Link>
+                </div>
+              </div>
+
+              {/* Team Pro Tier */}
+              <div className="flex flex-col justify-between rounded-2xl border-2 border-[#0F172A] bg-[#F8FAFC] p-8 shadow-lg relative">
+                <div className="absolute -top-3 right-6 rounded-full bg-[#0F172A] px-3 py-0.5 text-[11px] font-mono font-bold text-[#FFFFFF]">
+                  RECOMMENDED
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-display text-lg font-bold text-[#0F172A]">Team Studio</h3>
+                    <span className="rounded bg-[#ECFDF5] px-2.5 py-0.5 text-xs font-mono font-bold text-[#059669]">
+                      Multiplayer
+                    </span>
+                  </div>
+                  <div className="mt-4 flex items-baseline gap-1">
+                    <span className="font-display text-4xl font-extrabold text-[#0F172A]">$19</span>
+                    <span className="text-xs text-[#64748B]">/ user / month</span>
+                  </div>
+                  <p className="mt-3 text-xs leading-relaxed text-[#475569]">
+                    For engineering squads collaborating on shared microservice and SaaS database architectures.
+                  </p>
+
+                  <div className="mt-6 space-y-3 font-mono text-xs border-t border-[#E2E8F0] pt-6">
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Everything in Developer</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Real-time multiplayer cursor presence</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Automated Kahn AST Migration Engine</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Secure cryptographic share links</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#334155]">
+                      <Check size={14} className="text-[#059669]" weight="bold" />
+                      <span>Unlimited private team repositories</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  <Link href="/app/proj_demo_saas" className="btn-primary w-full justify-center text-xs py-3">
+                    <span>Launch Studio with Team Pro</span>
+                    <ArrowRight size={14} weight="bold" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 9. TECHNICAL FAQ */}
+        <section className="py-20 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
+                FAQ
+              </span>
+              <h2 className="font-display mt-2 text-3xl font-extrabold text-[#0F172A]">
+                Frequently Asked Technical Questions
+              </h2>
+            </div>
+
+            <div className="mt-10 space-y-4">
+              <div className="rounded-xl border border-[#CBD5E1] bg-[#FFFFFF] p-6 shadow-xs">
+                <h3 className="font-display text-sm font-bold text-[#0F172A]">
+                  Does FluxDB require access or credentials to my production database?
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  No. FluxDB is entirely non-invasive. You do not provide database credentials or connection strings.
+                  You design your schemas in the visual studio, and FluxDB outputs standard, deterministic DDL migration scripts that you run through your existing deployment pipelines.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-[#CBD5E1] bg-[#FFFFFF] p-6 shadow-xs">
+                <h3 className="font-display text-sm font-bold text-[#0F172A]">
+                  How does the Kahn topological migration engine handle circular foreign keys?
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  FluxDB compiles your schema into a Directed Acyclic Graph (DAG). If a mutual dependency or cycle is detected,
+                  the validator flags the edge and isolates the circular constraint into a secondary deferred <code className="bg-[#F1F5F9] px-1 py-0.5 rounded text-[#0F172A]">ALTER TABLE ADD CONSTRAINT</code> statement.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-[#CBD5E1] bg-[#FFFFFF] p-6 shadow-xs">
+                <h3 className="font-display text-sm font-bold text-[#0F172A]">
+                  Can I export directly into Drizzle ORM or Prisma?
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#475569]">
+                  Yes. The canvas maintains a unified Abstract Syntax Tree (AST). With one click or tab switch, it compiles the model into Drizzle TypeScript definitions with complete relation helpers, or native Prisma schema syntax.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 10. FINAL CONVERSION BANNER */}
+        <section className="py-20 bg-[#FFFFFF]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border border-[#CBD5E1] bg-[#F8FAFC] p-8 text-center sm:p-14 shadow-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#CBD5E1] bg-[#FFFFFF] px-3.5 py-1 text-xs font-semibold text-[#0F172A]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#059669]" />
+                <span>Zero Installation Required</span>
+              </div>
+
+              <h2 className="font-display mt-5 text-3xl font-extrabold text-[#0F172A] sm:text-4xl">
+                Ready to design your database schema together?
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#475569]">
+                Open the studio canvas right in your browser. Collaborate with your engineering team and generate production-ready migrations in seconds.
+              </p>
+
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link href="/app/proj_demo_saas" className="btn-primary py-3 px-6 text-sm">
-                  <span>Open Studio Canvas</span>
+                  <span>Launch Live Studio Canvas</span>
                   <ArrowRight size={15} weight="bold" />
                 </Link>
                 <Link href="/app/dashboard" className="btn-secondary py-3 px-5 text-sm">
-                  Dashboard
+                  View Demo Dashboards
                 </Link>
               </div>
             </div>
@@ -642,27 +1152,72 @@ ALTER TABLE memberships
         </section>
       </main>
 
-      {/* Clean Enterprise Footer */}
-      <footer className="border-t border-[#E2E8F0] bg-[#FFFFFF] py-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <span className="font-display text-sm font-extrabold text-[#0F172A]">FluxDB</span>
-            <span className="font-mono text-xs text-[#94A3B8]">Season 4 Hackathon Submission</span>
+      {/* 11. ENTERPRISE FOOTER */}
+      <footer className="border-t border-[#E2E8F0] bg-[#FFFFFF] py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
+                  <Database size={15} weight="bold" />
+                </div>
+                <span className="font-display text-base font-extrabold text-[#0F172A]">FluxDB</span>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-[#64748B]">
+                The visual studio and deterministic migration engine for relational database architectures.
+              </p>
+              <div className="mt-4 flex items-center gap-2 text-xs font-mono text-[#059669]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#059669] animate-pulse" />
+                <span>Edge Runtime: Operational (99.99%)</span>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#0F172A]">Platform</h4>
+              <ul className="mt-3 space-y-2 text-xs text-[#64748B]">
+                <li><Link href="/app/proj_demo_saas" className="hover:text-[#0F172A]">Studio Canvas</Link></li>
+                <li><Link href="/app/dashboard" className="hover:text-[#0F172A]">Schema Repositories</Link></li>
+                <li><Link href="/app/proj_demo_saas/migrations" className="hover:text-[#0F172A]">Kahn Diff Engine</Link></li>
+                <li><Link href="/share/share_demo_token" className="hover:text-[#0F172A]">Read-Only Viewer</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#0F172A]">Compilers</h4>
+              <ul className="mt-3 space-y-2 text-xs text-[#64748B]">
+                <li><span className="hover:text-[#0F172A]">PostgreSQL 16+</span></li>
+                <li><span className="hover:text-[#0F172A]">Drizzle ORM</span></li>
+                <li><span className="hover:text-[#0F172A]">Prisma Schema</span></li>
+                <li><span className="hover:text-[#0F172A]">MySQL & SQLite / D1</span></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#0F172A]">Project</h4>
+              <ul className="mt-3 space-y-2 text-xs text-[#64748B]">
+                <li>
+                  <a
+                    href="https://github.com/hosein-ul/fluxdb"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-[#0F172A]"
+                  >
+                    GitHub Source Code ↗
+                  </a>
+                </li>
+                <li><span>Season 4 Hackathon Submission</span></li>
+                <li><span>Next.js 15 · TypeScript · Tailwind v4</span></li>
+              </ul>
+            </div>
           </div>
 
-          <div className="flex items-center gap-6 text-xs text-[#64748B]">
-            <a
-              href="https://github.com/hosein-ul/fluxdb"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-[#0F172A] transition-colors font-medium"
-            >
-              GitHub Repository
-            </a>
-            <Link href="/share/share_demo_token" className="hover:text-[#0F172A] transition-colors font-medium">
-              Read-Only Viewer
-            </Link>
-            <span>Next.js 15 · TypeScript</span>
+          <div className="mt-12 border-t border-[#E2E8F0] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#94A3B8]">
+            <span>© 2026 FluxDB Studio. All rights reserved.</span>
+            <div className="flex gap-4 font-mono text-[11px]">
+              <span>Latency: &lt; 40ms</span>
+              <span>·</span>
+              <span>AST Version: v0.38</span>
+            </div>
           </div>
         </div>
       </footer>
