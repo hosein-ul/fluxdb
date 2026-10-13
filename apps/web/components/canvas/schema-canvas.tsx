@@ -14,7 +14,6 @@ import {
   Node,
   BackgroundVariant,
   NodeChange,
-  applyNodeChanges,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -26,7 +25,7 @@ import { ExportModal } from "./export-modal";
 import { ShareModal } from "./share-modal";
 import { useSchemaStore } from "@/lib/store";
 import { TableColor } from "@fluxdb/schema-types";
-import { Cursor, Plus, X } from "@phosphor-icons/react";
+import { Cursor, X } from "@phosphor-icons/react";
 
 import type { NodeTypes, EdgeTypes } from "@xyflow/react";
 
@@ -122,7 +121,7 @@ export function SchemaCanvas({ readOnly = false }: { readOnly?: boolean }) {
 
   return (
     <div
-      className="relative flex h-full w-full flex-col overflow-hidden bg-[#050709]"
+      className="relative flex h-full w-full flex-col overflow-hidden bg-[#F8FAFC]"
       onClick={() => selectObject(null)}
       data-testid="canvas"
     >
@@ -155,14 +154,14 @@ export function SchemaCanvas({ readOnly = false }: { readOnly?: boolean }) {
               variant={BackgroundVariant.Dots}
               gap={24}
               size={1}
-              color="#1A2133"
-              className="bg-[#050709]"
+              color="#CBD5E1"
+              className="bg-[#F8FAFC]"
             />
-            <Controls className="!border-[#1A2133] !bg-[#0D1117]" />
+            <Controls className="!border-[#E2E8F0] !bg-[#FFFFFF] !shadow-sm !rounded-md" />
             <MiniMap
-              nodeColor={(n) => "#2563EB"}
-              maskColor="rgba(7, 9, 14, 0.85)"
-              className="!border-[#1A2133] !bg-[#0D1117] !rounded-lg"
+              nodeColor={() => "#0F172A"}
+              maskColor="rgba(248, 250, 252, 0.75)"
+              className="!border-[#E2E8F0] !bg-[#FFFFFF] !rounded-lg !shadow-sm"
             />
           </ReactFlow>
 
@@ -181,11 +180,11 @@ export function SchemaCanvas({ readOnly = false }: { readOnly?: boolean }) {
                   size={16}
                   weight="fill"
                   style={{ color: c.color }}
-                  className="drop-shadow"
+                  className="drop-shadow-xs"
                 />
                 <span
                   style={{ backgroundColor: c.color }}
-                  className="rounded px-1.5 py-0.5 text-[9px] font-bold text-black shadow-md font-mono"
+                  className="rounded px-1.5 py-0.5 text-[9px] font-bold text-white shadow-xs font-mono"
                 >
                   {c.name}
                 </span>
@@ -206,15 +205,15 @@ export function SchemaCanvas({ readOnly = false }: { readOnly?: boolean }) {
 
       {/* Add Table Modal */}
       {isAddTableOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-sm rounded-2xl border border-[#253047] bg-[#0D1117] p-5 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#1A2133] pb-3">
-              <h3 className="font-display text-sm font-bold text-[#F0F4FF]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm rounded-xl border border-[#CBD5E1] bg-[#FFFFFF] p-5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
+              <h3 className="font-display text-sm font-bold text-[#0F172A]">
                 Add Database Table
               </h3>
               <button
                 onClick={() => setIsAddTableOpen(false)}
-                className="text-[#7A90B0] hover:text-[#F0F4FF]"
+                className="text-[#64748B] hover:text-[#0F172A]"
               >
                 <X size={16} />
               </button>
@@ -222,7 +221,7 @@ export function SchemaCanvas({ readOnly = false }: { readOnly?: boolean }) {
 
             <form onSubmit={handleCreateNewTable} className="mt-4 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#7A90B0] mb-1">
+                <label className="block text-xs font-semibold text-[#0F172A] mb-1">
                   Table Name
                 </label>
                 <input
@@ -237,8 +236,8 @@ export function SchemaCanvas({ readOnly = false }: { readOnly?: boolean }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#7A90B0] mb-1.5">
-                  Header Color
+                <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                  Header Color Accent
                 </label>
                 <div className="flex items-center gap-2">
                   {tableColorsList.map((c) => (
@@ -248,24 +247,24 @@ export function SchemaCanvas({ readOnly = false }: { readOnly?: boolean }) {
                       onClick={() => setNewTableColor(c)}
                       className={`h-6 w-6 rounded-full border transition-all cursor-pointer ${
                         newTableColor === c
-                          ? "border-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.4)]"
+                          ? "border-[#0F172A] scale-110 shadow-xs ring-2 ring-[#0F172A]/20"
                           : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                       style={{
                         backgroundColor:
                           c === "cobalt" ? "#2563EB" :
-                          c === "emerald" ? "#10B981" :
-                          c === "amber" ? "#F59E0B" :
-                          c === "rose" ? "#EF4444" :
-                          c === "violet" ? "#8B5CF6" :
-                          c === "cyan" ? "#06B6D4" : "#64748B",
+                          c === "emerald" ? "#059669" :
+                          c === "amber" ? "#D97706" :
+                          c === "rose" ? "#DC2626" :
+                          c === "violet" ? "#7C3AED" :
+                          c === "cyan" ? "#0891B2" : "#475569",
                       }}
                     />
                   ))}
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 border-t border-[#1A2133] pt-3">
+              <div className="flex items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3">
                 <button
                   type="button"
                   onClick={() => setIsAddTableOpen(false)}

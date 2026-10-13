@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FluxDB — Visual Schema Studio & Migration Engine",
+  title: "FluxDB — Collaborative Database Schema Studio",
   description:
-    "Engineering console for collaborative database schema design, visual foreign-key topologies, and deterministic SQL migration generation.",
+    "The collaborative database studio for modern engineering teams. Design visual ER diagrams, validate constraints, and compile automated migrations for PostgreSQL, Drizzle, and Prisma.",
   icons: {
     icon: "/favicon.ico",
   },
@@ -16,13 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400,300&f[]=general-sans@600,500,400&display=swap"
+          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&f[]=general-sans@600,500,400&display=swap"
           rel="stylesheet"
         />
         <link
@@ -30,7 +30,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-[#0B0E14] text-[#F8FAFC] antialiased selection:bg-[#F59E0B]/30 selection:text-[#FCD34D]">
+      <body className="min-h-screen bg-[#FFFFFF] text-[#0F172A] antialiased selection:bg-[#0F172A] selection:text-[#FFFFFF]">
         {children}
       </body>
     </html>

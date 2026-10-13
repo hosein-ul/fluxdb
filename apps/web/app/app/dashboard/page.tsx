@@ -104,19 +104,19 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#0B0E14] p-6 lg:p-10">
+    <div className="flex-1 overflow-y-auto bg-[#F8FAFC] p-6 lg:p-10 text-[#0F172A]">
       <div className="mx-auto max-w-6xl">
         {/* Top Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-[#1C2436] pb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-[#E2E8F0] pb-6">
           <div>
-            <div className="inline-flex items-center gap-2 font-mono text-[11px] text-[#F59E0B]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]" />
-              <span>SCHEMA WORKSPACE // REPOSITORIES</span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#CBD5E1] bg-[#FFFFFF] px-3 py-0.5 font-mono text-[11px] text-[#0F172A] shadow-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#059669]" />
+              <span className="font-medium">Schema Repositories</span>
             </div>
-            <h1 className="font-display mt-2 text-2xl font-bold tracking-tight text-[#F8FAFC] sm:text-3xl">
+            <h1 className="font-display mt-2 text-2xl font-extrabold tracking-tight text-[#0F172A] sm:text-3xl">
               Active Schemas & Topologies
             </h1>
-            <p className="mt-1 text-xs text-[#94A3B8]">
+            <p className="mt-1 text-xs text-[#475569]">
               Visually model relational topologies, collaborate in real time, and compile zero-downtime migrations.
             </p>
           </div>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
           <div className="relative w-full max-w-sm">
             <MagnifyingGlass
               size={15}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]"
             />
             <input
               type="text"
@@ -147,10 +147,10 @@ export default function DashboardPage() {
             />
           </div>
 
-          <div className="flex items-center gap-3 text-xs font-mono text-[#94A3B8]">
-            <span>Repositories: <strong className="text-[#F8FAFC]">{projectsList.length}</strong></span>
+          <div className="flex items-center gap-3 text-xs font-mono text-[#64748B]">
+            <span>Repositories: <strong className="text-[#0F172A]">{projectsList.length}</strong></span>
             <span>·</span>
-            <span>Edge Engine: <strong className="text-[#10B981]">ONLINE</strong></span>
+            <span>Edge Engine: <strong className="text-[#059669]">ONLINE</strong></span>
           </div>
         </div>
 
@@ -159,51 +159,51 @@ export default function DashboardPage() {
           {filteredProjects.map((p) => (
             <div
               key={p.id}
-              className="group flex flex-col justify-between rounded-lg border border-[#1C2436] bg-[#111622] p-5 transition-all duration-200 hover:border-[#28354D] hover:bg-[#131926] shadow-xl"
+              className="group flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] p-5 transition-all duration-200 hover:border-[#CBD5E1] hover:shadow-md shadow-xs"
             >
               <div>
                 <div className="flex items-start justify-between">
-                  <div className="flex h-9 w-9 items-center justify-center rounded border border-[#28354D] bg-[#182030] text-[#F59E0B]">
-                    <Database size={18} weight="duotone" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] shadow-xs">
+                    <Database size={18} weight="bold" />
                   </div>
-                  <span className="rounded bg-[#182030] px-2 py-0.5 font-mono text-[10px] text-[#94A3B8]">
+                  <span className="rounded border border-[#E2E8F0] bg-[#F8FAFC] px-2 py-0.5 font-mono text-[10px] text-[#64748B]">
                     Updated {p.updatedAt}
                   </span>
                 </div>
 
-                <h3 className="font-display mt-4 text-base font-bold text-[#F8FAFC] group-hover:text-[#FBBF24] transition-colors">
+                <h3 className="font-display mt-4 text-base font-bold text-[#0F172A] group-hover:text-[#2563EB] transition-colors">
                   {p.name}
                 </h3>
-                <p className="mt-1.5 text-xs text-[#94A3B8] line-clamp-2 leading-relaxed">
+                <p className="mt-1.5 text-xs text-[#475569] line-clamp-2 leading-relaxed">
                   {p.description}
                 </p>
 
                 {/* Metrics */}
-                <div className="mt-5 grid grid-cols-3 gap-2 border-y border-[#1C2436] py-2.5 font-mono text-center text-[11px]">
+                <div className="mt-5 grid grid-cols-3 gap-2 rounded-lg border border-[#F1F5F9] bg-[#F8FAFC] py-2.5 font-mono text-center text-[11px]">
                   <div>
                     <span className="text-[#64748B]">Tables</span>
-                    <p className="font-bold text-[#F8FAFC]">{p.tableCount}</p>
+                    <p className="font-bold text-[#0F172A]">{p.tableCount}</p>
                   </div>
                   <div>
                     <span className="text-[#64748B]">Columns</span>
-                    <p className="font-bold text-[#F8FAFC]">{p.columnCount}</p>
+                    <p className="font-bold text-[#0F172A]">{p.columnCount}</p>
                   </div>
                   <div>
                     <span className="text-[#64748B]">Relations</span>
-                    <p className="font-bold text-[#F59E0B]">{p.relationCount}</p>
+                    <p className="font-bold text-[#059669]">{p.relationCount}</p>
                   </div>
                 </div>
               </div>
 
               {/* Card Footer */}
-              <div className="mt-5 flex items-center justify-between pt-2">
+              <div className="mt-5 flex items-center justify-between border-t border-[#F1F5F9] pt-3">
                 <Link
                   href={`/app/${p.id}/migrations`}
-                  className="flex items-center gap-1 text-[11px] font-mono text-[#64748B] hover:text-[#94A3B8] transition-colors"
+                  className="flex items-center gap-1.5 text-[11px] font-mono text-[#64748B] hover:text-[#0F172A] transition-colors"
                   title="View Migration Diff"
                 >
-                  <GitBranch size={13} className="text-[#F59E0B]" />
-                  <span>Diff</span>
+                  <GitBranch size={14} className="text-[#059669]" />
+                  <span>Migration Diff</span>
                 </Link>
 
                 <Link
@@ -232,12 +232,12 @@ export default function DashboardPage() {
 
         {/* Empty state if search returns nothing */}
         {filteredProjects.length === 0 && (
-          <div className="mt-16 flex flex-col items-center justify-center rounded-xl border border-[#1C2436] bg-[#111622] p-12 text-center">
-            <Database size={32} className="text-[#64748B]" />
-            <h3 className="font-display mt-3 text-sm font-semibold text-[#F8FAFC]">
+          <div className="mt-16 flex flex-col items-center justify-center rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] p-12 text-center shadow-xs">
+            <Database size={32} className="text-[#94A3B8]" />
+            <h3 className="font-display mt-3 text-sm font-bold text-[#0F172A]">
               No schemas match &quot;{searchQuery}&quot;
             </h3>
-            <p className="mt-1 text-xs text-[#94A3B8]">
+            <p className="mt-1 text-xs text-[#64748B]">
               Try a different search query or create a new database schema.
             </p>
             <button
@@ -251,20 +251,20 @@ export default function DashboardPage() {
 
         {/* Create Project Modal */}
         {isNewProjectModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="w-full max-w-lg rounded-xl border border-[#28354D] bg-[#111622] p-6 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-[#1C2436] pb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+            <div className="w-full max-w-lg rounded-2xl border border-[#CBD5E1] bg-[#FFFFFF] p-6 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded border border-[#F59E0B]/30 bg-[#182030] text-[#F59E0B]">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0F172A] text-[#FFFFFF]">
                     <Plus size={15} weight="bold" />
                   </div>
-                  <h3 className="font-display text-base font-bold text-[#F8FAFC]">
+                  <h3 className="font-display text-base font-bold text-[#0F172A]">
                     Create New Schema Project
                   </h3>
                 </div>
                 <button
                   onClick={() => setIsNewProjectModalOpen(false)}
-                  className="rounded p-1 text-[#94A3B8] hover:text-[#F8FAFC]"
+                  className="rounded p-1 text-[#64748B] hover:text-[#0F172A]"
                 >
                   <X size={18} />
                 </button>
@@ -272,7 +272,7 @@ export default function DashboardPage() {
 
               <form onSubmit={handleCreateProject} className="mt-5 space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#F8FAFC] mb-1.5">
+                  <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
                     Project Identifier
                   </label>
                   <input
@@ -290,7 +290,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#F8FAFC] mb-1.5">
+                  <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
                     Topology Starter Template
                   </label>
                   <div className="space-y-2">
@@ -298,10 +298,10 @@ export default function DashboardPage() {
                       <div
                         key={tmpl.id}
                         onClick={() => setSelectedTemplate(tmpl.id)}
-                        className={`flex items-start gap-3 rounded border p-3 cursor-pointer transition-colors ${
+                        className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
                           selectedTemplate === tmpl.id
-                            ? "border-[#F59E0B] bg-[#F59E0B]/10"
-                            : "border-[#1C2436] bg-[#07090F] hover:border-[#28354D]"
+                            ? "border-[#0F172A] bg-[#F8FAFC] ring-2 ring-[#0F172A]/10"
+                            : "border-[#E2E8F0] bg-[#FFFFFF] hover:border-[#CBD5E1]"
                         }`}
                       >
                         <div className="mt-0.5">
@@ -310,14 +310,14 @@ export default function DashboardPage() {
                             name="template"
                             checked={selectedTemplate === tmpl.id}
                             onChange={() => setSelectedTemplate(tmpl.id)}
-                            className="accent-[#F59E0B]"
+                            className="accent-[#0F172A]"
                           />
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-[#F8FAFC]">
+                          <p className="text-xs font-semibold text-[#0F172A]">
                             {tmpl.name} ({tmpl.schema.tables.length} tables)
                           </p>
-                          <p className="text-[11px] text-[#94A3B8] mt-0.5">
+                          <p className="text-[11px] text-[#64748B] mt-0.5">
                             {tmpl.description}
                           </p>
                         </div>
@@ -326,7 +326,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 border-t border-[#1C2436] pt-4">
+                <div className="flex items-center justify-end gap-3 border-t border-[#E2E8F0] pt-4">
                   <button
                     type="button"
                     onClick={() => setIsNewProjectModalOpen(false)}

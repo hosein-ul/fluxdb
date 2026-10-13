@@ -8,46 +8,46 @@ import type { Table, TableColor } from "@fluxdb/schema-types";
 
 const colorStyles: Record<TableColor, { border: string; headerBg: string; text: string; dot: string }> = {
   amber: {
-    border: "border-[#F59E0B]/50 hover:border-[#F59E0B]",
-    headerBg: "bg-[#F59E0B]/15",
-    text: "text-[#FBBF24]",
-    dot: "bg-[#F59E0B]",
+    border: "border-[#CBD5E1] hover:border-[#94A3B8]",
+    headerBg: "bg-[#FFFBEB]",
+    text: "text-[#B45309]",
+    dot: "bg-[#D97706]",
   },
   cobalt: {
-    border: "border-[#38BDF8]/40 hover:border-[#38BDF8]",
-    headerBg: "bg-[#38BDF8]/15",
-    text: "text-[#7DD3FC]",
-    dot: "bg-[#38BDF8]",
+    border: "border-[#CBD5E1] hover:border-[#94A3B8]",
+    headerBg: "bg-[#EFF6FF]",
+    text: "text-[#1D4ED8]",
+    dot: "bg-[#2563EB]",
   },
   emerald: {
-    border: "border-[#10B981]/40 hover:border-[#10B981]",
-    headerBg: "bg-[#10B981]/15",
-    text: "text-[#34D399]",
-    dot: "bg-[#10B981]",
+    border: "border-[#CBD5E1] hover:border-[#94A3B8]",
+    headerBg: "bg-[#ECFDF5]",
+    text: "text-[#047857]",
+    dot: "bg-[#059669]",
   },
   rose: {
-    border: "border-[#EF4444]/40 hover:border-[#EF4444]",
-    headerBg: "bg-[#EF4444]/15",
-    text: "text-[#F87171]",
-    dot: "bg-[#EF4444]",
+    border: "border-[#CBD5E1] hover:border-[#94A3B8]",
+    headerBg: "bg-[#FEF2F2]",
+    text: "text-[#B91C1C]",
+    dot: "bg-[#DC2626]",
   },
   violet: {
-    border: "border-[#A855F7]/40 hover:border-[#A855F7]",
-    headerBg: "bg-[#A855F7]/15",
-    text: "text-[#C084FC]",
-    dot: "bg-[#A855F7]",
+    border: "border-[#CBD5E1] hover:border-[#94A3B8]",
+    headerBg: "bg-[#FAF5FF]",
+    text: "text-[#6B21A8]",
+    dot: "bg-[#7C3AED]",
   },
   cyan: {
-    border: "border-[#06B6D4]/40 hover:border-[#06B6D4]",
-    headerBg: "bg-[#06B6D4]/15",
-    text: "text-[#67E8F9]",
-    dot: "bg-[#06B6D4]",
+    border: "border-[#CBD5E1] hover:border-[#94A3B8]",
+    headerBg: "bg-[#ECFEFF]",
+    text: "text-[#0E7490]",
+    dot: "bg-[#0891B2]",
   },
   slate: {
-    border: "border-[#64748B]/40 hover:border-[#64748B]",
-    headerBg: "bg-[#64748B]/15",
-    text: "text-[#CBD5E1]",
-    dot: "bg-[#64748B]",
+    border: "border-[#CBD5E1] hover:border-[#94A3B8]",
+    headerBg: "bg-[#F1F5F9]",
+    text: "text-[#334155]",
+    dot: "bg-[#475569]",
   },
 };
 
@@ -59,7 +59,7 @@ export const TableNode = memo((props: NodeProps<TableNodeType>) => {
   const { selectObject, addColumn, deleteTable, selectedTableId } = useSchemaStore();
   const isSelected = selected || selectedTableId === table.id;
 
-  const style = colorStyles[table.color || "amber"] || colorStyles.amber;
+  const style = colorStyles[table.color || "slate"] || colorStyles.slate;
 
   return (
     <div
@@ -67,27 +67,27 @@ export const TableNode = memo((props: NodeProps<TableNodeType>) => {
         e.stopPropagation();
         selectObject(table.id);
       }}
-      className={`min-w-[240px] max-w-[320px] rounded-lg border bg-[#111622] shadow-2xl transition-all select-none ${
+      className={`min-w-[240px] max-w-[320px] rounded-xl border bg-[#FFFFFF] shadow-sm transition-all select-none ${
         isSelected
-          ? "border-[#F59E0B] shadow-[0_0_24px_rgba(245,158,11,0.25)] ring-1 ring-[#F59E0B]"
-          : `${style.border} hover:shadow-2xl`
+          ? "border-[#0F172A] shadow-md ring-2 ring-[#0F172A]/10"
+          : `${style.border} hover:shadow-md`
       }`}
     >
       {/* Universal Handles for React Flow connections */}
       <Handle
         type="target"
         position={Position.Left}
-        className="!h-3 !w-3 !rounded-full !border-2 !border-[#0B0E14] !bg-[#F59E0B] transition-transform hover:!scale-125"
+        className="!h-3 !w-3 !rounded-full !border-2 !border-[#FFFFFF] !bg-[#0F172A] transition-transform hover:!scale-125"
       />
       <Handle
         type="source"
         position={Position.Right}
-        className="!h-3 !w-3 !rounded-full !border-2 !border-[#0B0E14] !bg-[#FBBF24] transition-transform hover:!scale-125"
+        className="!h-3 !w-3 !rounded-full !border-2 !border-[#FFFFFF] !bg-[#0F172A] transition-transform hover:!scale-125"
       />
 
       {/* Table Header */}
       <div
-        className={`flex items-center justify-between border-b border-[#1C2436] px-3.5 py-2.5 rounded-t-lg ${style.headerBg}`}
+        className={`flex items-center justify-between border-b border-[#F1F5F9] px-3.5 py-2.5 rounded-t-xl ${style.headerBg}`}
       >
         <div className="flex items-center gap-2">
           <span className={`h-2.5 w-2.5 rounded-full ${style.dot}`} />
@@ -105,7 +105,7 @@ export const TableNode = memo((props: NodeProps<TableNodeType>) => {
               e.stopPropagation();
               deleteTable(table.id);
             }}
-            className="rounded p-1 text-[#64748B] hover:bg-[#182030] hover:text-[#EF4444] transition-colors"
+            className="rounded p-1 text-[#94A3B8] hover:bg-[#F1F5F9] hover:text-[#DC2626] transition-colors"
             title="Delete table"
           >
             <Trash size={12} />
@@ -114,7 +114,7 @@ export const TableNode = memo((props: NodeProps<TableNodeType>) => {
       </div>
 
       {/* Column Rows List */}
-      <div className="divide-y divide-[#1C2436]/60 py-1 font-mono text-[11px]">
+      <div className="divide-y divide-[#F1F5F9] py-1 font-mono text-[11px]">
         {table.columns.map((col) => {
           const isPk = col.constraints.includes("PRIMARY_KEY");
           const isUnique = col.constraints.includes("UNIQUE");
@@ -126,30 +126,30 @@ export const TableNode = memo((props: NodeProps<TableNodeType>) => {
                 e.stopPropagation();
                 selectObject(table.id, col.id);
               }}
-              className="flex items-center justify-between px-3.5 py-1.5 hover:bg-[#182030]/80 transition-colors cursor-pointer group"
+              className="flex items-center justify-between px-3.5 py-1.5 hover:bg-[#F8FAFC] transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2 overflow-hidden">
                 {isPk ? (
-                  <Key size={12} weight="fill" className="text-[#F59E0B] shrink-0" />
+                  <Key size={12} weight="fill" className="text-[#D97706] shrink-0" />
                 ) : (
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#334155] shrink-0" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#CBD5E1] shrink-0" />
                 )}
-                <span className={`truncate ${isPk ? "font-bold text-[#F8FAFC]" : "text-[#E2E8F0]"}`}>
+                <span className={`truncate ${isPk ? "font-bold text-[#0F172A]" : "text-[#334155]"}`}>
                   {col.name}
                 </span>
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
-                <span className="text-[10px] text-[#94A3B8]">
+                <span className="text-[10px] text-[#64748B]">
                   {col.type}
                 </span>
                 {isPk && (
-                  <span className="rounded bg-[#F59E0B]/20 px-1 text-[8px] font-bold text-[#FBBF24]">
+                  <span className="rounded bg-[#FEF3C7] px-1 text-[8px] font-bold text-[#D97706]">
                     PK
                   </span>
                 )}
                 {isUnique && !isPk && (
-                  <span className="rounded bg-[#10B981]/20 px-1 text-[8px] font-bold text-[#34D399]">
+                  <span className="rounded bg-[#EFF6FF] px-1 text-[8px] font-bold text-[#2563EB]">
                     UQ
                   </span>
                 )}
@@ -160,13 +160,13 @@ export const TableNode = memo((props: NodeProps<TableNodeType>) => {
       </div>
 
       {/* Footer "+ Add column" */}
-      <div className="border-t border-[#1C2436] p-1.5">
+      <div className="border-t border-[#F1F5F9] p-1.5">
         <button
           onClick={(e) => {
             e.stopPropagation();
             addColumn(table.id, { name: "new_field", type: "text" });
           }}
-          className="flex w-full items-center justify-center gap-1.5 rounded py-1 text-[11px] font-mono text-[#94A3B8] hover:bg-[#182030] hover:text-[#F8FAFC] transition-colors"
+          className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1 text-[11px] font-mono text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-colors"
         >
           <Plus size={12} weight="bold" />
           <span>Add column</span>

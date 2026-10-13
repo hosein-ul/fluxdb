@@ -1,50 +1,51 @@
-@import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400,300&f[]=general-sans@600,500,400&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&f[]=general-sans@600,500,400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fragment+Mono:ital@0;1&family=Geist+Mono:wght@300..700&display=swap");
 @import "tailwindcss";
 
 @layer base {
   :root {
-    /* Foundation Palette — 60% Graphite Slate */
-    --bg: #0B0E14;
-    --bg-surface: #111622;
-    --bg-elevated: #182030;
-    --bg-inset: #07090F;
+    /* Foundation Palette — Pure Crisp Architectural White / Platinum */
+    --bg: #FFFFFF;
+    --bg-surface: #F8FAFC;
+    --bg-elevated: #FFFFFF;
+    --bg-inset: #F1F5F9;
 
     /* Architectural Borders */
-    --border-subtle: #1C2436;
-    --border-strong: #28354D;
-    --border-accent: #F59E0B;
+    --border-subtle: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --border-accent: #0F172A;
 
     /* Text Hierarchy */
-    --text-primary: #F8FAFC;
-    --text-secondary: #94A3B8;
-    --text-tertiary: #64748B;
-    --text-code: #FCD34D;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-tertiary: #94A3B8;
+    --text-code: #0369A1;
 
-    /* Surgical Accent — Electric Cadmium Amber */
-    --accent: #F59E0B;
-    --accent-hover: #D97706;
-    --accent-light: rgba(245, 158, 11, 0.12);
-    --accent-glow: rgba(245, 158, 11, 0.25);
+    /* High-Fintech Surgical Accent (Obsidian Primary + Emerald / Sapphire Semantics) */
+    --accent: #0F172A;
+    --accent-hover: #1E293B;
+    --accent-light: rgba(15, 23, 42, 0.06);
+    --accent-glow: rgba(15, 23, 42, 0.12);
 
     /* Functional Semantics */
-    --success: #10B981;
-    --success-light: rgba(16, 185, 129, 0.12);
-    --warning: #F59E0B;
-    --warning-light: rgba(245, 158, 11, 0.12);
-    --error: #EF4444;
-    --error-light: rgba(239, 68, 68, 0.12);
-    --info: #38BDF8;
+    --success: #059669;
+    --success-light: #ECFDF5;
+    --warning: #D97706;
+    --warning-light: #FFFBEB;
+    --error: #DC2626;
+    --error-light: #FEF2F2;
+    --info: #2563EB;
+    --info-light: #EFF6FF;
 
     /* Canvas tokens */
-    --canvas-bg: #080B10;
-    --canvas-grid: #161D2B;
-    --node-bg: #111622;
-    --node-border: #1C2436;
-    --node-hover: #28354D;
-    --node-selected: #F59E0B;
-    --edge-default: #334155;
-    --edge-hover: #F59E0B;
+    --canvas-bg: #F8FAFC;
+    --canvas-grid: #E2E8F0;
+    --node-bg: #FFFFFF;
+    --node-border: #E2E8F0;
+    --node-hover: #CBD5E1;
+    --node-selected: #0F172A;
+    --edge-default: #94A3B8;
+    --edge-hover: #0F172A;
 
     /* Spring Easings */
     --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -74,45 +75,10 @@
   }
 }
 
-/* Tactile 6-State Button Utilities */
+/* High-Fintech Buttons */
 .btn-primary {
-  background-color: var(--accent);
-  color: #0B0E14;
-  border-radius: 6px;
-  padding: 9px 18px;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: -0.01em;
-  transition: all 150ms var(--ease-spring);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  border: 1px solid rgba(245, 158, 11, 0.8);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-.btn-primary:hover:not(:disabled) {
-  background-color: #FBBF24;
-  box-shadow: 0 4px 20px var(--accent-glow);
-  transform: translateY(-1px);
-}
-.btn-primary:active:not(:disabled) {
-  transform: scale(0.98) translateY(1px);
-}
-.btn-primary:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45);
-}
-.btn-primary:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border-strong);
+  background-color: #0F172A;
+  color: #FFFFFF;
   border-radius: 6px;
   padding: 9px 18px;
   font-weight: 500;
@@ -124,19 +90,54 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border: 1px solid #0F172A;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: #1E293B;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  transform: translateY(-1px);
+}
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98) translateY(1px);
+}
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.2);
+}
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  color: #0F172A;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  padding: 9px 18px;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  transition: all 150ms var(--ease-spring);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
 }
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--bg-elevated);
-  border-color: #3B4B69;
-  color: #FFFFFF;
+  background-color: #F8FAFC;
+  border-color: #94A3B8;
+  color: #0F172A;
 }
 .btn-secondary:active:not(:disabled) {
   transform: scale(0.98);
 }
 .btn-secondary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.15);
 }
 .btn-secondary:disabled {
   opacity: 0.45;
@@ -145,7 +146,7 @@
 
 .btn-ghost {
   background-color: transparent;
-  color: var(--text-secondary);
+  color: #475569;
   border: 1px solid transparent;
   border-radius: 6px;
   padding: 7px 12px;
@@ -159,29 +160,29 @@
   cursor: pointer;
 }
 .btn-ghost:hover:not(:disabled) {
-  color: var(--text-primary);
-  background-color: var(--bg-elevated);
+  color: #0F172A;
+  background-color: #F1F5F9;
 }
 .btn-ghost:active:not(:disabled) {
   transform: scale(0.98);
 }
 
 .input-well {
-  background-color: var(--bg-inset);
-  border: 1px solid var(--border-subtle);
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
   border-radius: 6px;
   padding: 8px 12px;
-  color: var(--text-primary);
+  color: #0F172A;
   font-size: 13px;
   transition: border-color 150ms, box-shadow 150ms;
 }
 .input-well:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+  border-color: #0F172A;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 .input-well::placeholder {
-  color: var(--text-tertiary);
+  color: #94A3B8;
 }
 
 /* Keyboard badge kbd */
@@ -192,12 +193,12 @@
   font-family: "Geist Mono", monospace;
   font-size: 10px;
   font-weight: 600;
-  padding: 2px 5px;
+  padding: 2px 6px;
   border-radius: 4px;
-  background-color: #161D2B;
-  border: 1px solid #28354D;
-  color: #94A3B8;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+  background-color: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #475569;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.05);
 }
 
 /* Custom scrollbars */
@@ -209,31 +210,31 @@
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: #CBD5E1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
+  background: #94A3B8;
 }
 
-/* React Flow canvas styling override */
+/* React Flow canvas styling override for Light Modernist studio */
 .react-flow__background {
   background-color: var(--canvas-bg) !important;
 }
 .react-flow__controls {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
-  border: 1px solid var(--border-subtle) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+  border: 1px solid #E2E8F0 !important;
   border-radius: 6px !important;
   overflow: hidden !important;
-  background-color: var(--bg-surface) !important;
+  background-color: #FFFFFF !important;
 }
 .react-flow__controls-button {
-  background-color: var(--bg-surface) !important;
-  border-bottom: 1px solid var(--border-subtle) !important;
-  fill: var(--text-secondary) !important;
-  color: var(--text-secondary) !important;
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  fill: #475569 !important;
+  color: #475569 !important;
 }
 .react-flow__controls-button:hover {
-  background-color: var(--bg-elevated) !important;
-  fill: var(--accent) !important;
+  background-color: #F8FAFC !important;
+  fill: #0F172A !important;
 }

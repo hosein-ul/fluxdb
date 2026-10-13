@@ -48,31 +48,31 @@ export function CanvasToolbar({
   };
 
   return (
-    <div className="flex h-14 w-full shrink-0 items-center justify-between border-b border-[#1C2436] bg-[#07090F] px-4 select-none">
+    <div className="flex h-14 w-full shrink-0 items-center justify-between border-b border-[#E2E8F0] bg-[#FFFFFF] px-4 select-none">
       {/* Left Area: Back nav & Project Details */}
       <div className="flex items-center gap-3">
         <Link
           href="/app/dashboard"
-          className="flex h-8 w-8 items-center justify-center rounded border border-[#1C2436] bg-[#111622] text-[#94A3B8] hover:border-[#28354D] hover:text-[#F8FAFC] transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A] transition-colors"
           title="Back to Dashboard"
         >
           <ArrowLeft size={15} />
         </Link>
 
-        <div className="h-4 w-px bg-[#1C2436]" />
+        <div className="h-4 w-px bg-[#E2E8F0]" />
 
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-xs sm:text-sm text-[#F8FAFC]">
+            <span className="font-display font-bold text-xs sm:text-sm text-[#0F172A]">
               {project?.name || "storefront-production"}
             </span>
-            <span className="rounded bg-[#F59E0B]/15 px-1.5 py-0.5 text-[10px] font-mono text-[#FBBF24]">
+            <span className="rounded bg-[#F1F5F9] px-1.5 py-0.5 text-[10px] font-mono text-[#475569]">
               v{schema.version}
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px] text-[#64748B] font-mono">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span>CRDT_EDGE // SYNCED</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#059669] animate-pulse" />
+            <span>Synced to edge</span>
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@ export function CanvasToolbar({
             if (e.target.value) loadTemplate(e.target.value);
           }}
           defaultValue=""
-          className="hidden md:inline-block rounded border border-[#1C2436] bg-[#111622] px-2.5 py-1.5 text-xs font-mono text-[#94A3B8] hover:border-[#28354D] focus:outline-none"
+          className="hidden md:inline-block rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] px-2.5 py-1.5 text-xs font-mono text-[#475569] hover:bg-[#F8FAFC] focus:outline-none"
         >
           <option value="" disabled>
             Load Template...
@@ -106,14 +106,14 @@ export function CanvasToolbar({
           ))}
         </select>
 
-        <div className="hidden sm:block h-4 w-px bg-[#1C2436]" />
+        <div className="hidden sm:block h-4 w-px bg-[#E2E8F0]" />
 
         {/* Undo / Redo */}
         <div className="hidden sm:flex items-center gap-1">
           <button
             onClick={undo}
             disabled={historyIndex <= 0}
-            className="flex h-8 w-8 items-center justify-center rounded border border-[#1C2436] bg-[#111622] text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-40 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A] disabled:opacity-40 transition-colors"
             title="Undo (Ctrl+Z)"
           >
             <ArrowCounterClockwise size={13} />
@@ -121,7 +121,7 @@ export function CanvasToolbar({
           <button
             onClick={redo}
             disabled={historyIndex >= history.length - 1}
-            className="flex h-8 w-8 items-center justify-center rounded border border-[#1C2436] bg-[#111622] text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-40 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A] disabled:opacity-40 transition-colors"
             title="Redo (Ctrl+Y)"
           >
             <ArrowClockwise size={13} />
@@ -131,20 +131,20 @@ export function CanvasToolbar({
         {/* Migrations Direct Link */}
         <Link
           href={`/app/${project?.id || "proj_demo_saas"}/migrations`}
-          className="hidden lg:flex items-center gap-1.5 rounded border border-[#1C2436] bg-[#111622] px-3 py-1.5 text-xs font-medium text-[#94A3B8] hover:border-[#28354D] hover:text-[#F8FAFC] transition-colors"
+          className="hidden lg:flex items-center gap-1.5 rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] px-3 py-1.5 text-xs font-medium text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A] transition-colors"
           title="Open Migrations Diff Engine"
         >
-          <GitBranch size={13} className="text-[#F59E0B]" />
+          <GitBranch size={13} className="text-[#0F172A]" />
           <span>Diff Engine</span>
         </Link>
 
         {/* Save Checkpoint */}
         <button
           onClick={handleSaveSnapshot}
-          className="flex items-center gap-1.5 rounded border border-[#1C2436] bg-[#111622] px-3 py-1.5 text-xs font-medium text-[#94A3B8] hover:border-[#28354D] hover:text-[#F8FAFC] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] px-3 py-1.5 text-xs font-medium text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A] transition-colors"
           title="Save named version checkpoint"
         >
-          {savedToast ? <Check size={13} className="text-[#10B981]" /> : <FloppyDisk size={13} />}
+          {savedToast ? <Check size={13} className="text-[#059669]" /> : <FloppyDisk size={13} />}
           <span>{savedToast ? "Saved!" : "Checkpoint"}</span>
         </button>
       </div>
@@ -163,27 +163,26 @@ export function CanvasToolbar({
                 <img
                   src={c.avatar}
                   alt={c.name}
-                  className="h-6 w-6 rounded-full border-2 object-cover"
-                  style={{ borderColor: c.color }}
+                  className="h-6 w-6 rounded-full border-2 border-white object-cover"
                 />
                 <span
-                  className="absolute bottom-0 right-0 h-1.5 w-1.5 rounded-full border border-[#07090F]"
+                  className="absolute bottom-0 right-0 h-1.5 w-1.5 rounded-full border border-white"
                   style={{ backgroundColor: c.color }}
                 />
               </div>
             ))}
           </div>
-          <span className="rounded bg-[#111622] px-1.5 py-0.5 text-[10px] font-mono text-[#94A3B8]">
+          <span className="rounded-full bg-[#F1F5F9] px-2 py-0.5 text-[10px] font-mono text-[#64748B]">
             3 online
           </span>
         </div>
 
-        <div className="h-4 w-px bg-[#1C2436]" />
+        <div className="h-4 w-px bg-[#E2E8F0]" />
 
         {/* Share Button */}
         <button
           onClick={onOpenShare}
-          className="flex items-center gap-1.5 rounded border border-[#1C2436] bg-[#111622] px-3 py-1.5 text-xs font-medium text-[#94A3B8] hover:border-[#28354D] hover:text-[#F8FAFC] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-[#CBD5E1] bg-[#FFFFFF] px-3 py-1.5 text-xs font-medium text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A] transition-colors"
         >
           <ShareNetwork size={14} />
           <span>Share</span>

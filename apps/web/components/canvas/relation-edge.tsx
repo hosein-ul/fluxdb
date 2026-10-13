@@ -32,9 +32,9 @@ export function RelationEdge({
         path={edgePath}
         markerEnd={markerEnd}
         style={{
-          stroke: "#F59E0B",
+          stroke: "#0F172A",
           strokeWidth: 1.5,
-          strokeDasharray: "4 2",
+          strokeDasharray: "4 3",
           ...style,
         }}
       />
@@ -45,7 +45,7 @@ export function RelationEdge({
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             pointerEvents: "all",
           }}
-          className="rounded border border-[#F59E0B]/40 bg-[#07090F] px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#FBBF24] shadow-md select-none"
+          className="rounded border border-[#CBD5E1] bg-[#FFFFFF] px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#0F172A] shadow-xs select-none"
         >
           {label || "1:N"}
         </div>
