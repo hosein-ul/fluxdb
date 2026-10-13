@@ -5,18 +5,15 @@ import { TableColor, ColumnType, ColumnConstraint } from "@fluxdb/schema-types";
 import {
   Trash,
   Plus,
-  Key,
-  ShieldCheck,
-  Palette,
   X,
   FileCode,
   Info,
 } from "@phosphor-icons/react";
 
 const tableColors: TableColor[] = [
+  "amber",
   "cobalt",
   "emerald",
-  "amber",
   "rose",
   "violet",
   "cyan",
@@ -64,39 +61,39 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
     const totalColumns = schema.tables.reduce((acc, t) => acc + t.columns.length, 0);
 
     return (
-      <aside className="h-full w-80 shrink-0 border-l border-[#1A2133] bg-[#0A0C12] p-5 text-xs overflow-y-auto">
-        <div className="flex items-center gap-2 border-b border-[#1A2133] pb-3 text-[#7A90B0]">
+      <aside className="h-full w-80 shrink-0 border-l border-[#1C2436] bg-[#07090F] p-5 text-xs overflow-y-auto">
+        <div className="flex items-center gap-2 border-b border-[#1C2436] pb-3 text-[#94A3B8]">
           <Info size={16} />
-          <span className="font-display font-bold uppercase tracking-wider text-[#F0F4FF]">
+          <span className="font-display font-bold uppercase tracking-wider text-[#F8FAFC]">
             Schema Overview
           </span>
         </div>
 
         <div className="mt-5 space-y-4">
-          <div className="rounded-xl border border-[#1A2133] bg-[#0D1117] p-4 space-y-3 font-mono">
+          <div className="rounded border border-[#1C2436] bg-[#111622] p-4 space-y-3 font-mono">
             <div className="flex justify-between">
-              <span className="text-[#7A90B0]">Version:</span>
-              <span className="font-bold text-[#F0F4FF]">v{schema.version}</span>
+              <span className="text-[#94A3B8]">Version:</span>
+              <span className="font-bold text-[#F8FAFC]">v{schema.version}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#7A90B0]">Total Tables:</span>
-              <span className="font-bold text-[#F0F4FF]">{schema.tables.length}</span>
+              <span className="text-[#94A3B8]">Total Tables:</span>
+              <span className="font-bold text-[#F8FAFC]">{schema.tables.length}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#7A90B0]">Total Columns:</span>
-              <span className="font-bold text-[#F0F4FF]">{totalColumns}</span>
+              <span className="text-[#94A3B8]">Total Columns:</span>
+              <span className="font-bold text-[#F8FAFC]">{totalColumns}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#7A90B0]">Relationships:</span>
-              <span className="font-bold text-[#60A5FA]">{schema.relations.length}</span>
+              <span className="text-[#94A3B8]">Relationships:</span>
+              <span className="font-bold text-[#F59E0B]">{schema.relations.length}</span>
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#1A2133] bg-[#0D1117] p-4">
-            <h4 className="font-display font-semibold text-xs text-[#F0F4FF]">
+          <div className="rounded border border-[#1C2436] bg-[#111622] p-4">
+            <h4 className="font-display font-semibold text-xs text-[#F8FAFC]">
               Interactive Canvas Tips
             </h4>
-            <ul className="mt-2.5 space-y-2 text-[11px] text-[#7A90B0] leading-relaxed">
+            <ul className="mt-2.5 space-y-2 text-[11px] text-[#94A3B8] leading-relaxed">
               <li>• Click any table node to edit properties and manage columns.</li>
               <li>• Drag between table handles (dots) to create foreign key relations.</li>
               <li>• Use Ctrl+Z / Ctrl+Y for undo and redo.</li>
@@ -117,15 +114,15 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
 
   // Table & Column Inspector
   return (
-    <aside className="h-full w-80 shrink-0 border-l border-[#1A2133] bg-[#0A0C12] p-5 text-xs overflow-y-auto">
+    <aside className="h-full w-80 shrink-0 border-l border-[#1C2436] bg-[#07090F] p-5 text-xs overflow-y-auto">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#1A2133] pb-3">
-        <span className="font-display font-bold uppercase tracking-wider text-[#60A5FA]">
+      <div className="flex items-center justify-between border-b border-[#1C2436] pb-3">
+        <span className="font-display font-bold uppercase tracking-wider text-[#FBBF24]">
           {selectedColumn ? "Column Inspector" : "Table Inspector"}
         </span>
         <button
           onClick={() => selectObject(null)}
-          className="rounded p-1 text-[#7A90B0] hover:text-[#F0F4FF]"
+          className="rounded p-1 text-[#94A3B8] hover:text-[#F8FAFC]"
           title="Deselect"
         >
           <X size={14} />
@@ -135,7 +132,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
       <div className="mt-4 space-y-5">
         {/* Table Name */}
         <div>
-          <label className="block text-[11px] font-semibold text-[#7A90B0] mb-1">
+          <label className="block text-[11px] font-semibold text-[#94A3B8] mb-1">
             Table Identifier
           </label>
           <input
@@ -148,7 +145,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
 
         {/* Color Palette */}
         <div>
-          <label className="block text-[11px] font-semibold text-[#7A90B0] mb-1.5">
+          <label className="block text-[11px] font-semibold text-[#94A3B8] mb-1.5">
             Header Accent Color
           </label>
           <div className="flex items-center gap-2">
@@ -156,18 +153,18 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
               <button
                 key={c}
                 onClick={() => updateTableColor(selectedTable.id, c)}
-                className={`h-6 w-6 rounded-full border transition-all cursor-pointer ${
+                className={`h-5 w-5 rounded-full border transition-all cursor-pointer ${
                   selectedTable.color === c
                     ? "border-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.4)]"
                     : "border-transparent opacity-70 hover:opacity-100"
                 }`}
                 style={{
                   backgroundColor:
-                    c === "cobalt" ? "#2563EB" :
-                    c === "emerald" ? "#10B981" :
                     c === "amber" ? "#F59E0B" :
+                    c === "cobalt" ? "#38BDF8" :
+                    c === "emerald" ? "#10B981" :
                     c === "rose" ? "#EF4444" :
-                    c === "violet" ? "#8B5CF6" :
+                    c === "violet" ? "#A855F7" :
                     c === "cyan" ? "#06B6D4" : "#64748B",
                 }}
                 title={c}
@@ -177,14 +174,14 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
         </div>
 
         {/* Columns Editor Section */}
-        <div className="border-t border-[#1A2133] pt-4">
+        <div className="border-t border-[#1C2436] pt-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="font-semibold text-[#F0F4FF]">
+            <span className="font-semibold text-[#F8FAFC]">
               Columns ({selectedTable.columns.length})
             </span>
             <button
               onClick={() => addColumn(selectedTable.id, { name: "new_field", type: "text" })}
-              className="flex items-center gap-1 rounded bg-[#2563EB]/15 px-2 py-0.5 text-[10px] font-semibold text-[#93C5FD] hover:bg-[#2563EB] hover:text-white transition-colors"
+              className="flex items-center gap-1 rounded bg-[#F59E0B]/20 px-2 py-0.5 text-[10px] font-semibold text-[#FBBF24] hover:bg-[#F59E0B] hover:text-[#0B0E14] transition-colors"
             >
               <Plus size={10} weight="bold" />
               <span>Add</span>
@@ -209,10 +206,10 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                 <div
                   key={col.id}
                   onClick={() => selectObject(selectedTable.id, col.id)}
-                  className={`rounded-lg border p-2.5 transition-colors cursor-pointer ${
+                  className={`rounded border p-2.5 transition-colors cursor-pointer ${
                     isColSelected
-                      ? "border-[#2563EB] bg-[#0D1117]"
-                      : "border-[#1A2133] bg-[#07090E] hover:border-[#253047]"
+                      ? "border-[#F59E0B] bg-[#182030]"
+                      : "border-[#1C2436] bg-[#111622] hover:border-[#28354D]"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -220,13 +217,13 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                       type="text"
                       value={col.name}
                       onChange={(e) => updateColumn(selectedTable.id, col.id, { name: e.target.value })}
-                      className="bg-transparent font-mono text-xs font-semibold text-[#F0F4FF] focus:outline-none w-32"
+                      className="bg-transparent font-mono text-xs font-semibold text-[#F8FAFC] focus:outline-none w-32"
                     />
 
                     <select
                       value={col.type}
                       onChange={(e) => updateColumn(selectedTable.id, col.id, { type: e.target.value as ColumnType })}
-                      className="rounded bg-[#131920] px-1.5 py-0.5 text-[10px] font-mono text-[#93C5FD] border border-[#1A2133] focus:outline-none"
+                      className="rounded bg-[#07090F] px-1.5 py-0.5 text-[10px] font-mono text-[#FBBF24] border border-[#1C2436] focus:outline-none"
                     >
                       {columnTypes.map((t) => (
                         <option key={t} value={t}>
@@ -240,7 +237,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                         e.stopPropagation();
                         deleteColumn(selectedTable.id, col.id);
                       }}
-                      className="text-[#7A90B0] hover:text-[#EF4444] p-1"
+                      className="text-[#64748B] hover:text-[#EF4444] p-1"
                       title="Delete column"
                     >
                       <Trash size={12} />
@@ -248,7 +245,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                   </div>
 
                   {/* Constraint toggles */}
-                  <div className="mt-2 flex items-center gap-1.5 border-t border-[#1A2133]/60 pt-1.5 text-[10px] font-mono">
+                  <div className="mt-2 flex items-center gap-1.5 border-t border-[#1C2436]/60 pt-1.5 text-[10px] font-mono">
                     <button
                       type="button"
                       onClick={(e) => {
@@ -256,7 +253,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                         toggleConstraint("PRIMARY_KEY");
                       }}
                       className={`rounded px-1.5 py-0.5 transition-colors ${
-                        isPk ? "bg-[#F59E0B] text-black font-bold" : "bg-[#131920] text-[#7A90B0]"
+                        isPk ? "bg-[#F59E0B] text-[#0B0E14] font-bold" : "bg-[#07090F] text-[#94A3B8]"
                       }`}
                     >
                       PK
@@ -269,7 +266,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                         toggleConstraint("NOT_NULL");
                       }}
                       className={`rounded px-1.5 py-0.5 transition-colors ${
-                        isNotNull ? "bg-[#10B981] text-black font-bold" : "bg-[#131920] text-[#7A90B0]"
+                        isNotNull ? "bg-[#38BDF8] text-[#0B0E14] font-bold" : "bg-[#07090F] text-[#94A3B8]"
                       }`}
                     >
                       NN
@@ -282,7 +279,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                         toggleConstraint("UNIQUE");
                       }}
                       className={`rounded px-1.5 py-0.5 transition-colors ${
-                        isUnique ? "bg-[#2563EB] text-white font-bold" : "bg-[#131920] text-[#7A90B0]"
+                        isUnique ? "bg-[#10B981] text-[#0B0E14] font-bold" : "bg-[#07090F] text-[#94A3B8]"
                       }`}
                     >
                       UQ
@@ -293,7 +290,7 @@ export function InspectorPanel({ onOpenExport }: { onOpenExport: () => void }) {
                       placeholder="default..."
                       value={col.defaultValue || ""}
                       onChange={(e) => updateColumn(selectedTable.id, col.id, { defaultValue: e.target.value })}
-                      className="ml-auto w-20 bg-transparent text-[10px] text-[#7A90B0] border-b border-[#1A2133] focus:outline-none"
+                      className="ml-auto w-20 bg-transparent text-[10px] text-[#94A3B8] border-b border-[#1C2436] focus:outline-none"
                     />
                   </div>
                 </div>

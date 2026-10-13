@@ -3,29 +3,29 @@
 import Link from "next/link";
 import { SchemaCanvas } from "@/components/canvas/schema-canvas";
 import { useSchemaStore } from "@/lib/store";
-import { Eye, ArrowRight, Database } from "@phosphor-icons/react";
+import { Eye, ArrowRight } from "@phosphor-icons/react";
 
 export default function PublicSharePage() {
   const { project, schema } = useSchemaStore();
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#07090E] text-[#F0F4FF]">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#0B0E14] text-[#F8FAFC]">
       {/* Top Read-Only Banner */}
-      <div className="flex h-11 shrink-0 items-center justify-between border-b border-[#F59E0B]/30 bg-[#F59E0B]/10 px-4 text-xs font-mono text-[#F59E0B]">
+      <div className="flex h-11 shrink-0 items-center justify-between border-b border-[#F59E0B]/30 bg-[#F59E0B]/10 px-4 text-xs font-mono text-[#FBBF24]">
         <div className="flex items-center gap-2">
           <Eye size={16} weight="bold" />
           <span>
-            Viewing <strong>{project?.name || "storefront-production"}</strong> (v{schema.version}) — Read-Only Mode
+            Viewing <strong>{project?.name || "saas-subscription-service"}</strong> (v{schema.version}) — Read-Only Mode
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-[11px] text-[#7A90B0]">
+          <span className="hidden sm:inline text-[11px] text-[#94A3B8]">
             Shared via FluxDB Studio
           </span>
           <Link
             href="/app/dashboard"
-            className="flex items-center gap-1 rounded bg-[#2563EB] px-2.5 py-1 text-xs font-semibold text-white hover:bg-[#1D4ED8] transition-colors"
+            className="btn-primary text-xs py-1 px-3"
           >
             <span>Open in FluxDB</span>
             <ArrowRight size={12} weight="bold" />

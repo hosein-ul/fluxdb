@@ -61,80 +61,80 @@ export function ExportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="flex h-[90vh] max-h-[720px] w-full max-w-4xl flex-col rounded-2xl border border-[#253047] bg-[#0D1117] shadow-2xl overflow-hidden">
+      <div className="flex h-[90vh] max-h-[720px] w-full max-w-4xl flex-col rounded-xl border border-[#28354D] bg-[#111622] shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#1A2133] px-6 py-4 bg-[#0A0C12]">
+        <div className="flex items-center justify-between border-b border-[#1C2436] px-6 py-4 bg-[#07090F]">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563EB]/20 text-[#60A5FA]">
+            <div className="flex h-8 w-8 items-center justify-center rounded border border-[#F59E0B]/30 bg-[#182030] text-[#F59E0B]">
               <FileCode size={18} weight="duotone" />
             </div>
             <div>
-              <h3 className="font-display text-base font-bold text-[#F0F4FF]">
-                Export Schema Code
+              <h3 className="font-display text-base font-bold text-[#F8FAFC]">
+                Export Target Dialect DDL
               </h3>
-              <p className="text-[11px] text-[#7A90B0]">
-                Compiled live from your active studio canvas model (v{schema.version}).
+              <p className="text-[11px] text-[#94A3B8] font-mono">
+                Synthesized live from schema topology AST (v{schema.version}).
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-[#7A90B0] hover:text-[#F0F4FF] transition-colors"
+            className="rounded p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Format Selector Bar */}
-        <div className="flex flex-wrap items-center justify-between border-b border-[#1A2133] bg-[#0A0C12] px-6 py-2.5">
+        <div className="flex flex-wrap items-center justify-between border-b border-[#1C2436] bg-[#07090F] px-6 py-2.5">
           <div className="flex items-center gap-2 overflow-x-auto py-1">
             <button
               onClick={() => setFormat("postgresql")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
+              className={`rounded px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
                 format === "postgresql"
-                  ? "bg-[#2563EB] text-white"
-                  : "bg-[#131920] text-[#7A90B0] hover:text-[#F0F4FF]"
+                  ? "bg-[#F59E0B] text-[#0B0E14] font-bold"
+                  : "bg-[#182030] text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
               PostgreSQL (.sql)
             </button>
             <button
-              onClick={() => setFormat("prisma")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
-                format === "prisma"
-                  ? "bg-[#2563EB] text-white"
-                  : "bg-[#131920] text-[#7A90B0] hover:text-[#F0F4FF]"
-              }`}
-            >
-              Prisma (.prisma)
-            </button>
-            <button
               onClick={() => setFormat("drizzle")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
+              className={`rounded px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
                 format === "drizzle"
-                  ? "bg-[#2563EB] text-white"
-                  : "bg-[#131920] text-[#7A90B0] hover:text-[#F0F4FF]"
+                  ? "bg-[#F59E0B] text-[#0B0E14] font-bold"
+                  : "bg-[#182030] text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
               Drizzle ORM (.ts)
             </button>
             <button
+              onClick={() => setFormat("prisma")}
+              className={`rounded px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
+                format === "prisma"
+                  ? "bg-[#F59E0B] text-[#0B0E14] font-bold"
+                  : "bg-[#182030] text-[#94A3B8] hover:text-[#F8FAFC]"
+              }`}
+            >
+              Prisma (.prisma)
+            </button>
+            <button
               onClick={() => setFormat("mysql")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
+              className={`rounded px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
                 format === "mysql"
-                  ? "bg-[#2563EB] text-white"
-                  : "bg-[#131920] text-[#7A90B0] hover:text-[#F0F4FF]"
+                  ? "bg-[#F59E0B] text-[#0B0E14] font-bold"
+                  : "bg-[#182030] text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
               MySQL (.sql)
             </button>
             <button
               onClick={() => setFormat("sqlite")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
+              className={`rounded px-3 py-1.5 text-xs font-mono font-medium transition-colors cursor-pointer ${
                 format === "sqlite"
-                  ? "bg-[#2563EB] text-white"
-                  : "bg-[#131920] text-[#7A90B0] hover:text-[#F0F4FF]"
+                  ? "bg-[#F59E0B] text-[#0B0E14] font-bold"
+                  : "bg-[#182030] text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
               SQLite (.sql)
@@ -144,14 +144,14 @@ export function ExportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopy}
-              className="flex items-center gap-1.5 rounded-lg border border-[#253047] bg-[#131920] px-3 py-1.5 text-xs font-medium text-[#F0F4FF] hover:bg-[#1A2133] transition-colors cursor-pointer"
+              className="btn-secondary text-xs py-1.5 px-3"
             >
               {copied ? <Check size={14} className="text-[#10B981]" /> : <Copy size={14} />}
               <span>{copied ? "Copied!" : "Copy"}</span>
             </button>
             <button
               onClick={handleDownload}
-              className="flex items-center gap-1.5 rounded-lg bg-[#2563EB] px-3.5 py-1.5 text-xs font-medium text-white hover:bg-[#1D4ED8] transition-colors cursor-pointer"
+              className="btn-primary text-xs py-1.5 px-3.5"
             >
               <DownloadSimple size={14} weight="bold" />
               <span>Download</span>
@@ -160,8 +160,8 @@ export function ExportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
         </div>
 
         {/* Code Content View */}
-        <div className="flex-1 overflow-auto bg-[#07090E] p-6 font-mono text-xs leading-relaxed text-[#93C5FD]">
-          <pre className="selection:bg-[#2563EB]/40">
+        <div className="flex-1 overflow-auto bg-[#0B0E14] p-6 font-mono text-xs leading-relaxed text-[#FCD34D]">
+          <pre className="selection:bg-[#F59E0B]/30">
             <code>{codeOutput}</code>
           </pre>
         </div>
