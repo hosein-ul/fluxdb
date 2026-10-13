@@ -5,3 +5,5 @@ dist
 .wrangler
 .env*.local
 *.log
+
+.vercel
